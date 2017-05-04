@@ -1,0 +1,4 @@
+git add <cosa que añadir> <- añadir cambios
+git commit -m "mensaje que subir" <- comitear cambios
+git push origin <nombre de la rama> <- subir cosas a la rama
+git pull origin <nombre de la rama> <- descargar cambios nuevos de la rama
