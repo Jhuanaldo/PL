@@ -1,0 +1,180 @@
+import java_cup.runtime.*;
+import java.io.*;
+
+parser code {:
+	public static void main(String args[]) throws Exception {
+		FileInputStream fichero=new FileInputStream(args[0]);
+		DataInputStream entrada =new DataInputStream(fichero);		
+		try{
+			new parser(new Yylex(entrada)).parse(); 						   	   
+		}
+		catch ( Exception e) {
+			e.printStackTrace();
+			System.out.println(" Análisis INCORRECTO !! :_(");
+			System.exit(1);
+		}
+		System.out.println("Análisis Correcto!!!<3");
+ 	}
+:}
+
+
+terminal LEFT_BRACE, RIGTH_BRACE, PAREN_I, PAREN_D, COMA, PUNTOCOMA, IGUAL, GUION, FLECHA, DOSPUNTOS, COMILLAS, ESCAPED_QUOTE;
+
+
+terminal String ID, ID_GLOBAL, ID_FUNCTION;
+terminal int INT;
+terminal Float FLOAT;
+terminal SL_COMMENT, ML_COMMENT, WS, NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF;
+terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, FOR, TRUE,FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
+terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
+
+terminal DOLLAR;
+
+non terminal ArrayList<Expresionlist> prog;
+non terminal Expresionlist expresionlist;
+non terminal expresion;
+non terminal require_block;
+non terminal function_definition;
+
+non terminal function_definition_params;
+non terminal function_definition_params_list;
+non terminal return_statement;
+non terminal function_call;
+
+non terminal function_call_param_list;
+non terminal function_call_params;
+non terminal if_elsif_statement;
+non terminal if_statement;
+non terminal case_statement;
+non terminal unless_statement;
+non terminal while_statement;
+non terminal while_expression_list;
+
+non terminal for_statement;
+non terminal for_expression_list;
+non terminal assignment;
+non terminal array_assignment;
+non terminal array_definition;
+non terminal array_definition_elements;
+non terminal array_selector;
+non terminal int_result;
+non terminal float_result;
+non terminal string_result;
+non terminal lvalue;
+non terminal rvalue;
+non terminal literal_t;
+non terminal float_t;
+non terminal int_t;
+non terminal bool_t;
+non terminal nil_t;
+non terminal id;
+non terminal id_global;
+non terminal id_function;
+non terminal terminator;
+
+
+
+GRAMATICA DE RAUL AQUI
+
+for_statement ::= FOR LEFT_RBRACKET expression SEMICOLON expression SEMICOLON expression RIGHT_RBRACKET crlf for_expression_list END | FOR expression SEMICOLON expression SEMICOLON expression crlf for_expression_list END;
+
+for_expression_list ::= expression terminator
+| RETRY terminator
+| BREAK terminator
+| for_expression_list expression terminator
+| for_expression_list RETRY terminator
+| for_expression_list BREAK terminator
+;
+
+
+assignment ::= lvalue ( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN | ASSIGN ) rvalue;
+
+
+array_assignment ::= (lvalue) (array_definition ASSIGN rvalue | ASSIGN array_definition);
+
+
+array_definition ::= LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET | LEFT_SBRACKET RIGHT_SBRACKET ;
+
+
+array_definition_elements : rvalue
+| array_definition_elements COMMA rvalue
+;
+
+
+array_selector ::= (id | id_global | function_call) LEFT_SBRACKET rvalue RIGHT_SBRACKET;
+
+int_result ::= int_result ( MUL | DIV | MOD ) int_result
+| int_result ( PLUS | MINUS ) int_result
+| int_t;  
+
+float_result ::= float_result ( MUL | DIV | MOD ) float_result
+| int_result ( MUL | DIV | MOD ) float_result
+| float_result ( MUL | DIV | MOD ) int_result
+| float_result ( PLUS | MINUS ) float_result
+| int_result ( PLUS | MINUS ) float_result
+| float_result ( PLUS | MINUS ) int_result
+| float_t;
+
+string_result ::= string_result MUL int_result
+| int_result MUL string_result
+| literal_t
+;
+
+lvalue ::= id | id_global | ID DOT ID_FUNCTION ;
+
+rvalue ::= lvalue 
+| array_assignment
+| int_result
+| float_result
+| string_result
+| assignment       
+| function_call
+| literal_t
+| bool_t
+| float_t
+| int_t
+| nil_t 
+| rvalue EXP rvalue
+| ( NOT | BIT_NOT ) rvalue
+| rvalue ( MUL | DIV | MOD ) rvalue
+| rvalue ( PLUS | MINUS ) rvalue
+| rvalue ( BIT_SHL | BIT_SHR ) rvalue
+| rvalue BIT_AND rvalue
+| rvalue ( BIT_OR | BIT_XOR )rvalue
+| rvalue ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL) rvalue
+| rvalue ( EQUAL | NOT_EQUAL) rvalue
+| rvalue ( OR | AND) rvalue
+| LEFT_RBRACKET rvalue RIGHT_RBRACKET;
+
+
+literal_t ::= LITERAL;
+
+float_t ::= FLOAT;
+
+int_t ::= INT;
+
+bool_t ::= TRUE | FALSE ;
+
+nil_t ::= NIL;
+
+id ::= ID;
+
+id_global ::= ID_GLOBAL;
+
+id_function ::= ID_FUNCTION;
+
+terminator ::= terminator SEMICOLON
+| terminator crlf
+| SEMICOLON
+| crlf
+;
+
+
+
+
+
+
+
+
+
+
