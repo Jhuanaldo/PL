@@ -1,29 +1,30 @@
 
 
-//* --------------------------Seccion codigo-usuario ------------------------*/ 
+//* --------------------------Seccion codigo-usuario ------------------------*/
 
 
 import java.io.*;
+import java_cup.runtime.Symbol;
 
 
-%% 
+%%
 
 
-/* -----------------Seccion de opciones y declaraciones -----------------*/ 
-/*--OPCIONES --*/ 
-/* Nombre de la clase generada para el analizadorlexico*/ 
+/* -----------------Seccion de opciones y declaraciones -----------------*/
+/*--OPCIONES --*/
+/* Nombre de la clase generada para el analizadorlexico*/
 
 
-%class analex 
+%class analex
 
 
-/* Indicar funcionamiento autonomo 
+/* Indicar funcionamiento autonomo
 
 
 %standalone */
 
 
-/* Posibilitar acceso a la columna y fila actual de analisis*/ 
+/* Posibilitar acceso a la columna y fila actual de analisis*/
 
 
 %line
@@ -32,29 +33,29 @@ import java.io.*;
 %column
 
 
-/* Habilitar la compatibilidad con el interfaz CUP para el generador sintáctico 
- 
+/* Habilitar la compatibilidad con el interfaz CUP para el generador sintáctico
+
 %cup */
 
 
-/*--DECLARACIONES --*/ 
+/*--DECLARACIONES --*/
 
 
-%{ 
+%{
 
 
 /* Creamos una instancia del analizador léxico y lo ejecutamos sobre el argumento dado en la entrada (sacamos un resumen de los caracteres, palabras) */
 
 
 //these variables are defined static because they will be referenced in main, a static method
-  
+
   static int numCount =0, identCount = 0, lineCount = 0;
-  
+
   public static void main(String [] args) throws IOException
-   
+
   {
       //create a scanner and use the scanner's yylex function
-   
+
       //if you want standard input, System.in instead of new FileReader(args[0])
       analex lexer = new analex(new FileReader(args[0]));
       lexer.yylex();
@@ -81,7 +82,7 @@ TAB =  \t
 
 
 "#".*	{/*SL_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO SIMPLE <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
-"=begin".*"=end" {/*ML_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO MULTILINEA <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
+"=begin""=end" {/*ML_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO MULTILINEA <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
 "=begin"           {System.out.println("Error en =begin: comentario no terminado");}
 
 "require"          {System.out.println("Token require <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
@@ -211,7 +212,7 @@ TAB =  \t
 
 <STRING> {
 "#{" { System.out.println("Token #{ <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1) );
-	} 
+	}
 	([a-zA-Z0-9\.á-ú" "])+ { System.out.println("Token String <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 	"\"" { yybegin(YYINITIAL); }
   "\'" { yybegin(YYINITIAL); }

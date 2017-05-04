@@ -4,9 +4,9 @@ import java.io.*;
 parser code {:
 	public static void main(String args[]) throws Exception {
 		FileInputStream fichero=new FileInputStream(args[0]);
-		DataInputStream entrada =new DataInputStream(fichero);		
+		DataInputStream entrada =new DataInputStream(fichero);
 		try{
-			new parser(new Yylex(entrada)).parse(); 						   	   
+			new parser(new Yylex(entrada)).parse();
 		}
 		catch ( Exception e) {
 			e.printStackTrace();
@@ -18,20 +18,20 @@ parser code {:
 :}
 
 
-terminal LEFT_BRACE, RIGHT_BRACE, PAREN_I, PAREN_D, COMA, PUNTOCOMA, IGUAL, GUION, FLECHA, DOSPUNTOS, COMILLAS, ESCAPED_QUOTE;
+terminal LEFT_BRACE, RIGTH_BRACE, PAREN_I, PAREN_D, COMA, PUNTOCOMA, IGUAL, GUION, FLECHA, DOSPUNTOS, COMILLAS, ESCAPED_QUOTE;
 
 
-terminal ID, ID_GLOBAL, ID_FUNCTION;
-terminal INT;
-terminal FLOAT;
+terminal String ID, ID_GLOBAL, ID_FUNCTION;
+terminal int INT;
+terminal Float FLOAT;
 terminal SL_COMMENT, ML_COMMENT, WS, NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF;
 terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, FOR, TRUE,FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
 terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
 
 terminal DOLLAR;
 
-non terminal prog;
-non terminal expresionlist;
+non terminal ArrayList<Expresionlist> prog;
+non terminal Expresionlist expresionlist;
 non terminal expresion;
 non terminal require_block;
 non terminal function_definition;
@@ -74,89 +74,7 @@ non terminal terminator;
 
 
 
-prog ::= expression_list;
-
-
-expression_list ::=  expression terminator
-                | expression_list expression terminator
-                | terminator;
-
-
-expression ::=  function_definition | require_block | if_statement | unless_statement | rvalue | return_statement | while_statement | for_statement ;
-
-
-require_block ::=  REQUIRE literal_t;
-
-
-function_definition ::=  function_definition_header function_definition_body END;
-
-
-function_definition_body ::=  expression_list;
-
-
-function_definition_header ::=  DEF function_name function_definition_params crlf | DEF function_name  crlf  ;
-
-
-function_name ::=  id_function | id | ID DOT ID_FUNCTION;
-
-
-function_definition_params ::=  LEFT_RBRACKET RIGHT_RBRACKET
-                           | LEFT_RBRACKET function_definition_params_list RIGHT_RBRACKET
-                           | function_definition_params_list;
-
-
-function_definition_params_list ::=  id | function_definition_params_list COMMA id;
-
-
-return_statement ::=  RETURN rvalue;
-
-
-function_call ::=  function_name LEFT_RBRACKET function_call_param_list RIGHT_RBRACKET |
- function_name function_call_param_list |
-  function_name LEFT_RBRACKET RIGHT_RBRACKET|
-  ;
-
-
-function_call_param_list ::=  function_call_params;
-
-
-function_call_params ::=  rvalue | function_call_params COMMA rvalue ;
-
-
-if_elsif_statement ::=  ELSIF rvalue crlf expression_list | ELSIF rvalue crlf expression_list ELSE crlf expression_list | ELSIF rvalue crlf expression_list if_elsif_statement;
-
-if_statement ::=  IF rvalue crlf expression_list END
-| IF rvalue THEN expression_list END
-| IF rvalue crlf expression_list ELSE crlf expression_list END
-| IF rvalue THEN expression_list ELSE expression_list END
-| IF rvalue crlf expression_list if_elsif_statement END
-;
-
-case_statement ::=  CASE ID WHEN rvalue THEN END
-|CASE ID WHEN rvalue terminator END
-|CASE ID WHEN rvalue THEN  expression_list END
-|CASE ID WHEN rvalue terminator  expression_list END
-|CASE ID ELSE expression_list END
-|CASE ID WHEN rvalue THEN case_statement
-|CASE ID WHEN rvalue terminator case_statement
-|CASE ID WHEN rvalue THEN  expression_list case_statement
-|CASE ID WHEN rvalue terminator  expression_list case_statement
-;
-
-unless_statement ::=  UNLESS rvalue crlf expression_list END;
-
-
-while_statement ::=  WHILE rvalue crlf while_expression_list END;
-
-
-while_expression_list ::=  expression terminator
-| RETRY terminator
-| BREAK terminator
-| while_expression_list expression terminator
-| while_expression_list RETRY terminator
-| while_expression_list BREAK terminator ;
-
-
+GRAMATICA DE RAUL AQUI
 
 for_statement ::= FOR LEFT_RBRACKET expression SEMICOLON expression SEMICOLON expression RIGHT_RBRACKET crlf for_expression_list END | FOR expression SEMICOLON expression SEMICOLON expression crlf for_expression_list END;
 
@@ -187,7 +105,7 @@ array_selector ::= (id | id_global | function_call) LEFT_SBRACKET rvalue RIGHT_S
 
 int_result ::= int_result ( MUL | DIV | MOD ) int_result
 | int_result ( PLUS | MINUS ) int_result
-| int_t;  
+| int_t;
 
 float_result ::= float_result ( MUL | DIV | MOD ) float_result
 | int_result ( MUL | DIV | MOD ) float_result
@@ -204,18 +122,18 @@ string_result ::= string_result MUL int_result
 
 lvalue ::= id | id_global | ID DOT ID_FUNCTION ;
 
-rvalue ::= lvalue 
+rvalue ::= lvalue
 | array_assignment
 | int_result
 | float_result
 | string_result
-| assignment       
+| assignment
 | function_call
 | literal_t
 | bool_t
 | float_t
 | int_t
-| nil_t 
+| nil_t
 | rvalue EXP rvalue
 | ( NOT | BIT_NOT ) rvalue
 | rvalue ( MUL | DIV | MOD ) rvalue
@@ -250,13 +168,3 @@ terminator ::= terminator SEMICOLON
 | SEMICOLON
 | crlf
 ;
-
-
-
-
-
-
-
-
-
-

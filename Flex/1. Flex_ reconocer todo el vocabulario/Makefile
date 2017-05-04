@@ -1,10 +1,10 @@
-all : borrar ejecutar
+all : clean ejecutar
 
-borrar:
-	rm analex.class
-	rm analex.java
+clean:
+	rm -f analex.class
+	rm -f analex.java
 
-ejecutar: 
+ejecutar:
 	jflex Lex.flex
 	javac analex.java
 	@echo ------------------------------------------- EJEMPLO 1 -------------------------------------------

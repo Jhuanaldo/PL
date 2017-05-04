@@ -385,8 +385,3 @@ DOLLAR : '$';
 
 LEFT_BRACE : '{'
 RIGHT_BRACE : '}'
-
-
-
-
-
