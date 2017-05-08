@@ -82,21 +82,21 @@ TAB =  \t
 
 
 "#".*	{/*SL_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO SIMPLE <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
-"=begin""=end" {/*ML_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO MULTILINEA <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
+"=begin"[^=]*"=end" {/*ML_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO MULTILINEA <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
 "=begin"           {System.out.println("Error en =begin: comentario no terminado");}
 
 "require"          {System.out.println("Token require <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "nil"              {System.out.println("Token nil <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "when"             {System.out.println("Token when <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "def"              {System.out.println("Token def <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"false"            {System.out.println("Token false <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); } 
+"false"            {System.out.println("Token false <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "not"              {System.out.println("Token not <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "while"            {System.out.println("Token while <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "for"              {System.out.println("Token for <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "then"             {System.out.println("Token then <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "do"               {System.out.println("Token do <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "if"               {System.out.println("Token if <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"true"             {System.out.println("Token true <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); } 
+"true"             {System.out.println("Token true <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "begin"            {System.out.println("Token begin <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "else"             {System.out.println("Token else <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "break"            {System.out.println("Token break <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
@@ -140,39 +140,7 @@ TAB =  \t
 "*="		       {System.out.println("Token Mul_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "/="		       {System.out.println("Token Div_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
 "%="		       {System.out.println("Token Mod_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-
-
-
-
 "//\""		       {System.out.println("Token Escaped_Quote <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
-"&"		       {System.out.println("Token Bit_And <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"|"		{System.out.println("Token Bit_Or <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"^"		{System.out.println("Token Bit_Xor <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"~"		{System.out.println("Token Bit_Not <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"<<"		{System.out.println("Token Bit_Shl <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-">>"		{System.out.println("Token Bit_Shr <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"+="		{System.out.println("Token Plus_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"-="		{System.out.println("Token Minus_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"+"		{System.out.println("Token Plus <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"-"		{System.out.println("Token Minus <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"/"		{System.out.println("Token Div <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"**"		{System.out.println("Token Exp <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"*"		{System.out.println("Token Mul <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"%"		{System.out.println("Token Mod <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"=="		{System.out.println("Token Equal <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"!="		{System.out.println("Token Not_Equal <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"<="		{System.out.println("Token Less_Equal <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-">="		{System.out.println("Token Greater_Equal <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"<"		{System.out.println("Token Less <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-">"		{System.out.println("Token Greater <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-
-
-"="		{System.out.println("Token Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"**="		{System.out.println("Token Exp_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"*="		{System.out.println("Token Mul_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"/="		{System.out.println("Token Div_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-"%="		{System.out.println("Token Mod_Assign <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
-
 
 "and" | "&&" 		{System.out.println("Token AND <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
 "or" | "||" 		{System.out.println("Token OR <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
@@ -182,7 +150,6 @@ TAB =  \t
 "]"					{System.out.println("Token ] <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
 "{"					{System.out.println("Token { <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
 "}"					{System.out.println("Token } <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
-
 
 
 [:digit:]+			{System.out.println("Token INT <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}

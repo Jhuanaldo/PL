@@ -3,6 +3,7 @@ all : clean ejecutar
 clean:
 	rm -f analex.class
 	rm -f analex.java
+	rm -f analex.java~
 
 ejecutar:
 	jflex Lex.flex
