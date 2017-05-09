@@ -24,12 +24,14 @@ class Estudiante
     return false unless File.readable?(@@filepath)
     return false unless File.writable?(@@filepath)
     return true
+    a = a+1
   end
 
   # Crea un archivo con permisos de escritura
   def self.crear_archivo
     File.open(@@filepath, 'w') unless existe_archivo?
     return validar_archivo?
+    file.create
   end
 
   # Recorremos el archivo plano y retornamos un arreglo con los
@@ -48,7 +50,7 @@ class Estudiante
 
   # Constructor de la aplicacion, recibe los datos introducidos
   # desde la aplicacion
-  def initialize(args={})
+  def initialize(args)
     @nombre           = args[:nombre]    || ""
     @identificador    = args[:identificador] || ""
     @fecha_nacimiento = args[:fecha_nacimiento]   || ""
@@ -57,9 +59,7 @@ class Estudiante
   # Guarda el archivo el estudiante en el archivo plano
   def guardar
     return false unless Estudiante.validar_archivo?
-    File.open(@@filepath, 'a') do |file|
-      file.puts "#{[@nombre, @identificador, @fecha_nacimiento].join("\t")}\n"
-    end
+    
     return true
   end
 end

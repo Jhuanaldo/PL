@@ -2,7 +2,7 @@ class MegaAnfitrion
   attr_accessor :nombres
 
   # Crear el objeto
-  def initialize(nombres = "Mundo")
+  def initialize(nombres, Mundo)
     @nombres = nombres
   end
 

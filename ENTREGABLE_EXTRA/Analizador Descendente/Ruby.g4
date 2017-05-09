@@ -8,7 +8,8 @@ prog : expression_list;
 
 expression_list : expression terminator
                 | expression_list expression terminator
-                | terminator;
+                | terminator
+             ;
 
 
 expression : function_definition | class_block| require_block | if_statement | do_statement|unless_statement | rvalue | return_statement | while_statement | for_statement ;
@@ -108,7 +109,7 @@ assignment : lvalue ( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD
 array_assignment : lvalue (array_definition ASSIGN rvalue | ASSIGN array_definition);
 
 
-array_definition : LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET | LEFT_SBRACKET RIGHT_SBRACKET ;
+array_definition : LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET | LEFT_SBRACKET RIGHT_SBRACKET | id LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET;
 
 
 array_definition_elements : rvalue
@@ -130,14 +131,14 @@ float_result : float_result ( MUL | DIV | MOD ) float_result
 | float_result ( PLUS | MINUS ) int_result
 | float_t;
 
-string_result : string_result MUL int_result
-| int_result MUL string_result
+string_result : string_result PLUS string_result
 | literal_t
 ;
 
 lvalue : id | id_global | ID DOT ID_FUNCTION | ID DOT ID ;
 
 rvalue: lvalue 
+| ID_ATTR
 | array_assignment
 | int_result
 | float_result
@@ -149,7 +150,7 @@ rvalue: lvalue
 | float_t
 | int_t
 | nil_t 
-|rvalue UNLESS rvalue
+| rvalue UNLESS rvalue
 | rvalue EXP rvalue
 | ( NOT | BIT_NOT ) rvalue
 | rvalue ( MUL | DIV | MOD ) rvalue
