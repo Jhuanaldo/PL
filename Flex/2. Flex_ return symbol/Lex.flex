@@ -1,24 +1,24 @@
 
 
-//* --------------------------Seccion codigo-usuario ------------------------*/ 
+//* --------------------------Seccion codigo-usuario ------------------------*/
 
 
 import java.io.*;
 import java_cup.runtime.Symbol;
 
 
-%% 
+%%
 
 
-/* -----------------Seccion de opciones y declaraciones -----------------*/ 
-/*--OPCIONES --*/ 
-/* Nombre de la clase generada para el analizadorlexico*/ 
+/* -----------------Seccion de opciones y declaraciones -----------------*/
+/*--OPCIONES --*/
+/* Nombre de la clase generada para el analizadorlexico*/
 
 
-%class analex 
+%class analex
 
 
-/* Indicar funcionamiento autonomo 
+/* Indicar funcionamiento autonomo
 
 
 %standalone */
@@ -91,14 +91,14 @@ TAB =  \t
 "nil"              { return new Symbol(sym.NIL);  }
 "when"             { return new Symbol(sym.WHEN);  }
 "def"              { return new Symbol(sym.DEF);  }
-"false"            { return new Symbol(sym.FALSE);  } 
+"false"            { return new Symbol(sym.FALSE);  }
 "not"              { return new Symbol(sym.NOT);  }
 "while"            { return new Symbol(sym.WHILE);  }
 "for"              { return new Symbol(sym.FOR);  }
 "then"             { return new Symbol(sym.THEN);  }
 "do"               { return new Symbol(sym.DO);  }
 "if"               { return new Symbol(sym.IF);  }
-"true"             { return new Symbol(sym.TRUE);  } 
+"true"             { return new Symbol(sym.TRUE);  }
 "begin"            { return new Symbol(sym.BEGIN);  }
 "else"             { return new Symbol(sym.ELSE);  }
 "break"            { return new Symbol(sym.BREAK);  }
@@ -179,7 +179,7 @@ TAB =  \t
 
 
 <STRING> {
-"#{" { return new Symbol(sym.ML_COMMENT); } 
+"#{" { return new Symbol(sym.ML_COMMENT); }
   ([a-zA-Z0-9\.á-ú" "])+ { System.out.println("Token String <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1)); }
   "\"" { yybegin(YYINITIAL); }
   "\'" { yybegin(YYINITIAL); }
