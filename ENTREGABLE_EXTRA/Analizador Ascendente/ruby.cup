@@ -2,7 +2,7 @@ import java_cup.runtime.*;
 import java.io.*;
 
 parser code {:
-	public static void main(String args[]) throws Exception {
+  public static void main(String args[]) throws Exception {
 		FileInputStream fichero=new FileInputStream(args[0]);
 		DataInputStream entrada =new DataInputStream(fichero);		
 		try{
@@ -17,49 +17,16 @@ parser code {:
  	}
 :}
 
-
 terminal LEFT_BRACE, RIGHT_BRACE;
-terminal ID, ID_GLOBAL, ID_FUNCTION;
+terminal ID, ID_GLOBAL, IDFUNCTION;
 terminal INT;
 terminal FLOAT;
-terminal NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF;
-terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
-terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
+terminal NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF,DO,ML_COMMENT,FOR,LLAVE_I,PUTS	;
+terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP, SL_COMMENT,DOLLAR,BEGIN,UNTIL;
+terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET, ID_FUNCTION;
 
-non terminal prog;
-non terminal expression_list;
-non terminal expression;
-non terminal require_block;
-non terminal function_definition;
-non terminal function_definition_header;
-non terminal function_definition_body;
-non terminal function_definition_params;
-non terminal function_definition_params_list;
-non terminal return_statement;
-non terminal function_call;
 
-non terminal function_call_paramsAUX;
-non terminal array_definition_elementsAUX;
-
-non terminal function_call_params;
-non terminal if_elsif_statement;
-non terminal if_statement;
-non terminal case_statement;
-non terminal unless_statement;
-non terminal while_statement;
-non terminal while_expression_list;
-
-non terminal assignment;
-non terminal array_assignment;
-non terminal array_definition;
-non terminal array_definition_elements;
-non terminal int_result;
-non terminal float_result;
-non terminal string_result;
-non terminal lvalue;
-non terminal rvalue;
-non terminal bool_t;
-non terminal terminator;
+non terminal prog, expression_list, expression, terminator,function_definition,class_block, if_statement, unless_statement, rvalue , return_statement, while_statement, case_statement,function_definition_header,function_definition_body,if_elsif_statement, array_assignment, int_result, float_result,string_result,assignment,lvalue,function_call,bool_t,while_expression_list,function_definition_params, function_definition_params_list,array_definition, function_call_params,array_definition_elements,function_call_paramsAUX,array_definition_elementsAUX;
 
 precedence left EXP_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN, DIV_ASSIGN,ASSIGN;
 precedence left OR;
@@ -77,49 +44,36 @@ precedence right CRLF, SEMICOLON;
 precedence left LEFT_RBRACKET,  RIGHT_RBRACKET, RIGHT_SBRACKET, LEFT_SBRACKET;
 
 
+
+
 start with prog;
 
 prog ::= expression_list;
 
-
-expression_list ::=  expression terminator
+expression_list ::= expression terminator
                 | expression_list expression terminator
                 | terminator;
 
+expression ::=  function_definition | class_block | if_statement | unless_statement | rvalue | return_statement | while_statement | case_statement;
 
-expression ::=  function_definition | require_block | if_statement | unless_statement | rvalue | return_statement | while_statement | case_statement;
-
-
-require_block ::=  REQUIRE LITERAL;
-
+terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF;
 
 function_definition ::=  function_definition_header function_definition_body END;
 
 
-function_definition_body ::=  expression_list;
 
 
 function_definition_header ::=  DEF lvalue function_definition_params CRLF | DEF lvalue  CRLF  ;
-
 
 function_definition_params ::=  LEFT_RBRACKET RIGHT_RBRACKET
                            | LEFT_RBRACKET function_definition_params_list RIGHT_RBRACKET
                            | function_definition_params_list;
 
+function_definition_body ::=  expression_list;
 
 function_definition_params_list ::=  ID | function_definition_params_list COMMA ID;
 
-
-return_statement ::=  RETURN rvalue;
-
-
-function_call ::=  LEFT_SBRACKET function_call_params RIGHT_SBRACKET |
- function_call_params |
-  LEFT_SBRACKET RIGHT_SBRACKET | 
-  ;
-
-
-if_elsif_statement ::=  ELSIF rvalue CRLF expression_list | ELSIF rvalue CRLF expression_list ELSE CRLF expression_list | ELSIF rvalue CRLF expression_list if_elsif_statement;
+class_block ::=  REQUIRE LITERAL;
 
 if_statement ::=  IF rvalue CRLF expression_list END
 | IF rvalue THEN expression_list END
@@ -128,85 +82,9 @@ if_statement ::=  IF rvalue CRLF expression_list END
 | IF rvalue CRLF expression_list if_elsif_statement END
 ;
 
-case_statement ::=  CASE ID WHEN rvalue THEN END
-|CASE ID WHEN rvalue terminator END
-|CASE ID WHEN rvalue THEN  expression_list END
-|CASE ID WHEN rvalue terminator  expression_list END
-|CASE ID ELSE expression_list END
-|CASE ID WHEN rvalue THEN case_statement
-|CASE ID WHEN rvalue terminator case_statement
-|CASE ID WHEN rvalue THEN  expression_list case_statement
-|CASE ID WHEN rvalue terminator  expression_list case_statement
-;
+if_elsif_statement ::=  ELSIF rvalue CRLF expression_list | ELSIF rvalue CRLF expression_list ELSE CRLF expression_list | ELSIF rvalue CRLF expression_list if_elsif_statement;
 
 unless_statement ::=  UNLESS rvalue CRLF expression_list END;
-
-
-while_statement ::=  WHILE rvalue CRLF while_expression_list END;
-
-
-while_expression_list ::=  expression terminator
-| RETRY terminator
-| BREAK terminator
-| while_expression_list expression terminator
-| while_expression_list RETRY terminator
-| while_expression_list BREAK terminator ;
-
-for_expression_list ::= expression terminator
-| RETRY terminator
-| BREAK terminator
-| for_expression_list expression terminator
-| for_expression_list RETRY terminator
-| for_expression_list BREAK terminator
-;
-
-assignment ::= lvalue PLUS_ASSIGN rvalue|lvalue  MINUS_ASSIGN rvalue|lvalue  MUL_ASSIGN rvalue|lvalue  DIV_ASSIGN rvalue| lvalue MOD_ASSIGN rvalue| lvalue EXP_ASSIGN rvalue| lvalue ASSIGN  rvalue; 
-
-array_assignment ::= lvalue array_definition ASSIGN rvalue |lvalue ASSIGN array_definition;
-
-
-array_definition ::= LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET | LEFT_SBRACKET RIGHT_SBRACKET ;
-
-
-array_definition_elements ::= rvalue array_definition_elementsAUX;
-array_definition_elementsAUX ::= COMMA rvalue array_definition_elementsAUX;
-
-function_call_params ::= rvalue function_call_paramsAUX;
-function_call_paramsAUX ::= COMMA rvalue function_call_paramsAUX;
-
-
-
-
-int_result ::= int_result MUL int_result
-| int_result DIV int_result
-| int_result MOD int_result
-| int_result PLUS int_result
-| int_result MINUS int_result
-| INT;  
-
-string_result ::= string_result MUL int_result
-| int_result MUL string_result
-| LITERAL
-;
-
-lvalue ::= ID_GLOBAL | ID | ID DOT ID_FUNCTION | ID_FUNCTION;
-
-float_result ::= float_result MUL float_result
-| float_result DIV float_result
-| float_result MOD float_result
-| int_result MUL float_result
-| int_result DIV float_result
-| int_result MOD float_result
-| float_result MUL int_result
-| float_result DIV int_result
-| float_result MOD int_result
-| float_result PLUS float_result
-| float_result MINUS float_result
-| int_result PLUS float_result
-| int_result MINUS float_result
-| float_result PLUS int_result
-| float_result MINUS int_result
-| FLOAT;
 
 rvalue ::= array_assignment
 | int_result
@@ -239,15 +117,85 @@ rvalue ::= array_assignment
 | rvalue AND rvalue 
 | LEFT_RBRACKET rvalue RIGHT_RBRACKET;
 
+return_statement ::=  RETURN rvalue;
+
+while_statement ::=  WHILE rvalue CRLF while_expression_list END;
+
+lvalue ::= ID_GLOBAL | ID | ID DOT ID_FUNCTION | ID_FUNCTION;
+
+array_assignment ::= lvalue array_definition ASSIGN rvalue |lvalue ASSIGN array_definition;
+
+int_result ::= int_result MUL int_result
+| int_result DIV int_result
+| int_result MOD int_result
+| int_result PLUS int_result
+| int_result MINUS int_result
+| INT;  
+
+
+string_result ::= string_result MUL int_result
+| int_result MUL string_result
+| LITERAL
+;
+
+float_result ::= float_result MUL float_result
+| float_result DIV float_result
+| float_result MOD float_result
+| int_result MUL float_result
+| int_result DIV float_result
+| int_result MOD float_result
+| float_result MUL int_result
+| float_result DIV int_result
+| float_result MOD int_result
+| float_result PLUS float_result
+| float_result MINUS float_result
+| int_result PLUS float_result
+| int_result MINUS float_result
+| float_result PLUS int_result
+| float_result MINUS int_result
+| FLOAT;
+
+assignment ::= lvalue PLUS_ASSIGN rvalue|lvalue  MINUS_ASSIGN rvalue|lvalue  MUL_ASSIGN rvalue|lvalue  DIV_ASSIGN rvalue| lvalue MOD_ASSIGN rvalue| lvalue EXP_ASSIGN rvalue| lvalue ASSIGN  rvalue; 
+
+function_call ::=  LEFT_SBRACKET function_call_params RIGHT_SBRACKET |
+ function_call_params |
+  LEFT_SBRACKET RIGHT_SBRACKET | 
+  ;
+
+
+function_call_params ::= rvalue function_call_paramsAUX;
+
+function_call_paramsAUX ::= COMMA rvalue function_call_paramsAUX;
 
 bool_t ::= TRUE | FALSE ;
 
+while_expression_list ::=  expression terminator
+| RETRY terminator
+| BREAK terminator
+| while_expression_list expression terminator
+| while_expression_list RETRY terminator
+| while_expression_list BREAK terminator ;
+
+array_definition ::= LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET | LEFT_SBRACKET RIGHT_SBRACKET ;
+
+array_definition_elements ::= rvalue array_definition_elementsAUX;
+
+array_definition_elementsAUX ::= COMMA rvalue array_definition_elementsAUX;
+
+
+
 /*
-terminator ::= terminator SEMICOLON
-| terminator CRLF
-| SEMICOLON
-| CRLF
+
+
+
+case_statement ::=  CASE ID WHEN rvalue THEN END
+|CASE ID WHEN rvalue terminator END
+|CASE ID WHEN rvalue THEN  expression_list END
+|CASE ID WHEN rvalue terminator  expression_list END
+|CASE ID ELSE expression_list END
+|CASE ID WHEN rvalue THEN case_statement
+|CASE ID WHEN rvalue terminator case_statement
+|CASE ID WHEN rvalue THEN  expression_list case_statement
+|CASE ID WHEN rvalue terminator  expression_list case_statement
 ;
 */
-
-terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF;
