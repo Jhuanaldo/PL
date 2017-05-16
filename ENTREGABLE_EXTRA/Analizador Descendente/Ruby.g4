@@ -117,7 +117,7 @@ array_definition_elements : rvalue
 ;
 
 
-array_selector : (id | id_global | function_call) LEFT_SBRACKET rvalue RIGHT_SBRACKET;
+
 
 int_result : int_result ( MUL | DIV | MOD ) int_result
 | int_result ( PLUS | MINUS ) int_result
@@ -402,8 +402,7 @@ ID_FUNCTION : ID [!?];
 
 DOLLAR : '$';
 
-LEFT_BRACE : '{';
-RIGHT_BRACE : '}';
+
 
 ID : ('@'|'@@'|) [a-zA-Z_][a-zA-Z0-9_]*;
 
