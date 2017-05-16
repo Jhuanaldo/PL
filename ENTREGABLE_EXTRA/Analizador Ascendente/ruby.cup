@@ -17,16 +17,16 @@ parser code {:
  	}
 :}
 
-terminal LEFT_BRACE, RIGHT_BRACE;
-terminal ID, ID_GLOBAL, IDFUNCTION;
+
+terminal ID, ID_GLOBAL, ID_FUNCTION,ID_ITER;
 terminal INT;
 terminal FLOAT;
-terminal NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF,DO,ML_COMMENT,FOR,LLAVE_I,PUTS	;
-terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP, SL_COMMENT,DOLLAR,BEGIN,UNTIL;
-terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET, ID_FUNCTION;
+terminal NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF,DO,FOR;
+terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
+terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
 
 
-non terminal prog, expression_list, expression, terminator,function_definition,class_block, if_statement, unless_statement, rvalue , return_statement, while_statement, case_statement,function_definition_header,function_definition_body,if_elsif_statement, array_assignment, int_result, float_result,string_result,assignment,lvalue,function_call,bool_t,while_expression_list,function_definition_params, function_definition_params_list,array_definition, function_call_params,array_definition_elements,function_call_paramsAUX,array_definition_elementsAUX;
+non terminal prog, expression_list, expression, terminator,function_definition,class_block, if_statement, unless_statement, rvalue , return_statement, while_statement, case_statement,case_statement_list, function_definition_header,function_definition_body,if_elsif_statement, array_assignment, int_result, float_result,string_result,assignment,lvalue,function_call,bool_t,while_expression_list,function_definition_params, for_statement,for_expression_list,function_definition_params_list,array_definition, function_call_params,array_definition_elements,function_call_paramsAUX,array_definition_elementsAUX,do_statement;
 
 precedence left EXP_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN, DIV_ASSIGN,ASSIGN;
 precedence left OR;
@@ -54,7 +54,7 @@ expression_list ::= expression terminator
                 | expression_list expression terminator
                 | terminator;
 
-expression ::=  function_definition | class_block | if_statement | unless_statement | rvalue | return_statement | while_statement | case_statement;
+expression ::=  function_definition | class_block | if_statement | unless_statement | rvalue | return_statement | while_statement | case_statement_list | for_statement | do_statement;
 
 terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF;
 
@@ -184,8 +184,8 @@ array_definition_elementsAUX ::= COMMA rvalue array_definition_elementsAUX;
 
 
 
-/*
 
+case_statement_list ::= case_statement | case_statement_list case_statement END;
 
 
 case_statement ::=  CASE ID WHEN rvalue THEN END
@@ -193,9 +193,18 @@ case_statement ::=  CASE ID WHEN rvalue THEN END
 |CASE ID WHEN rvalue THEN  expression_list END
 |CASE ID WHEN rvalue terminator  expression_list END
 |CASE ID ELSE expression_list END
-|CASE ID WHEN rvalue THEN case_statement
-|CASE ID WHEN rvalue terminator case_statement
-|CASE ID WHEN rvalue THEN  expression_list case_statement
-|CASE ID WHEN rvalue terminator  expression_list case_statement
 ;
-*/
+
+for_statement ::= FOR LEFT_RBRACKET expression SEMICOLON expression SEMICOLON expression RIGHT_RBRACKET CRLF for_expression_list END
+| FOR expression SEMICOLON expression SEMICOLON expression CRLF for_expression_list END;
+
+
+for_expression_list ::= expression terminator
+| RETRY terminator
+| BREAK terminator
+| for_expression_list expression terminator
+| for_expression_list RETRY terminator
+| for_expression_list BREAK terminator
+;
+do_statement ::= lvalue DO ID_ITER expression_list END;
+

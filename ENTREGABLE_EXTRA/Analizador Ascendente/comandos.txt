@@ -1,0 +1,10 @@
+(Estos solo si hace falta los jar del classpath, ejecutar al principio :	
+	export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/cup.jar
+	export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/JLlex.jar
+)
+
+jflex Lex.flex 
+cup ruby.cup 
+javac *.java
+java parser ejemplos/programaEjemplo ...
+
