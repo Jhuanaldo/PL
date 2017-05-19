@@ -56,22 +56,22 @@ TAB =  \t
 /* ------------------------Sección de reglas y acciones ----------------------*/
 
 
-"#".* {/*SL_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO SIMPLE <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
-"=begin"[^=]*"=end" {/*ML_COMMENT - DO NOTHING*/System.out.println("Token COMENTARIO MULTILINEA <" +yytext()+ "> encontrado en linea: " + (yyline+1) + " columna: " + (yycolumn+1));}
+"#".* /*SL_COMMENT - DO NOTHING*/
+"=begin"[^=]*"=end" /*ML_COMMENT - DO NOTHING*/
 "=begin"           {System.out.println("Error en =begin: comentario no terminado");}
 
 "require"          { return new Symbol(sym.REQUIRE); }
 "nil"              { return new Symbol(sym.NIL);  }
 "when"             { return new Symbol(sym.WHEN);  }
 "def"              { return new Symbol(sym.DEF);  }
-"false"            { return new Symbol(sym.FALSE);  } 
+"false"            { return new Symbol(sym.FALSE);  }
 "not"              { return new Symbol(sym.NOT);  }
 "while"            { return new Symbol(sym.WHILE);  }
 "for"              { return new Symbol(sym.FOR);  }
 "then"             { return new Symbol(sym.THEN);  }
 "do"               { return new Symbol(sym.DO);  }
 "if"               { return new Symbol(sym.IF);  }
-"true"             { return new Symbol(sym.TRUE);  } 
+"true"             { return new Symbol(sym.TRUE);  }
 "else"             { return new Symbol(sym.ELSE);  }
 "break"            { return new Symbol(sym.BREAK);  }
 "elsif"            { return new Symbol(sym.ELSIF);  }
@@ -139,7 +139,3 @@ TAB =  \t
 
 
   . {  }
-
-
-
-

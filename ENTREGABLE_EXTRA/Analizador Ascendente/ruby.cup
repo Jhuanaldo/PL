@@ -4,9 +4,9 @@ import java.io.*;
 parser code {:
   public static void main(String args[]) throws Exception {
 		FileInputStream fichero=new FileInputStream(args[0]);
-		DataInputStream entrada =new DataInputStream(fichero);		
+		DataInputStream entrada =new DataInputStream(fichero);
 		try{
-			new parser(new Yylex(entrada)).parse(); 						   	   
+			new parser(new Yylex(new BufferedReader(new InputStreamReader(entrada)))).parse();
 		}
 		catch ( Exception e) {
 			e.printStackTrace();
@@ -90,10 +90,10 @@ rvalue ::= array_assignment
 | int_result
 | float_result
 | string_result
-| assignment       
-| lvalue function_call 
+| assignment
+| lvalue function_call
 | bool_t
-| NIL 
+| NIL
 | rvalue EXP rvalue
 | NOT rvalue
 | BIT_NOT rvalue
@@ -114,7 +114,7 @@ rvalue ::= array_assignment
 | rvalue EQUAL rvalue
 | rvalue NOT_EQUAL rvalue
 | rvalue OR rvalue
-| rvalue AND rvalue 
+| rvalue AND rvalue
 | LEFT_RBRACKET rvalue RIGHT_RBRACKET;
 
 return_statement ::=  RETURN rvalue;
@@ -130,7 +130,7 @@ int_result ::= int_result MUL int_result
 | int_result MOD int_result
 | int_result PLUS int_result
 | int_result MINUS int_result
-| INT;  
+| INT;
 
 
 string_result ::= string_result MUL int_result
@@ -159,7 +159,7 @@ assignment ::= lvalue PLUS_ASSIGN rvalue|lvalue  MINUS_ASSIGN rvalue|lvalue  MUL
 
 function_call ::=  LEFT_SBRACKET function_call_params RIGHT_SBRACKET |
  function_call_params |
-  LEFT_SBRACKET RIGHT_SBRACKET | 
+  LEFT_SBRACKET RIGHT_SBRACKET |
   ;
 
 
