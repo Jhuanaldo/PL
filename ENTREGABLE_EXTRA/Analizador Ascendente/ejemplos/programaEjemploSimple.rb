@@ -29,6 +29,7 @@ def decir_adios
 	else
 		"4"
 	end
+	ma=[a,s,  8]
 end
 def method_name(rr, tt)
 	rr = 4
