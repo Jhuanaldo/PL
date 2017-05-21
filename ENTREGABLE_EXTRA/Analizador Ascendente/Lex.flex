@@ -48,7 +48,6 @@ TAB =  \t
 "false"            					{ return new Symbol(sym.FALSE);  }
 "not"              					{ return new Symbol(sym.NOT);  }
 "while"            					{ return new Symbol(sym.WHILE);  }
-"for"              					{ return new Symbol(sym.FOR);  }
 "then"             					{ return new Symbol(sym.THEN);  }
 "do"               					{ return new Symbol(sym.DO);  }
 "if"               					{ return new Symbol(sym.IF);  }
@@ -101,12 +100,12 @@ TAB =  \t
 
 
 
+// "\""(\\.|[^"\""])*["\""]			{ return new Symbol(sym.LITERAL); }
 [:digit:]+       					{ return new Symbol(sym.INT); }
-[:digit:]*'.'[0-9]+  				{ return new Symbol(sym.FLOAT); }
-"$"[a-zA-Z_][a-zA-Z0-9_]*         	{ return new Symbol(sym.ID_GLOBAL); }
-
+[:digit:]*"."[0-9]+  				{ return new Symbol(sym.FLOAT); }
+[a-zA-Z_][a-zA-Z0-9_]* 				{ return new Symbol(sym.ID); }
 [a-zA-Z_][a-zA-Z0-9_]*[!|?]?  		{ return new Symbol(sym.ID_FUNCTION); }
-("@" | "@@")?[a-zA-Z_][a-zA-Z0-9_]* { return new Symbol(sym.ID); }
+("@" | "@@" | "$")?[a-zA-Z_][a-zA-Z0-9_]* { return new Symbol(sym.ID_GLOBAL); }
 "." 								{ return new Symbol(sym.DOT); }
 
 
