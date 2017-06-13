@@ -13,7 +13,7 @@ ejemplo4 : exec m4
 ejemplo5 : exec m5
 
 
-exec:
+exec: clean
 	export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/cup.jar
 	export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/JLlex.jar
 	jflex Lex.flex
@@ -32,7 +32,8 @@ m5:
 	java parser ejemplos/programaEjemploSimple.rb
 
 clean:
-	rm -f *.java
-	rm -f *.java~
+	rm -f Yylex.java *~
+	rm -f parser.java
+	rm -f Sym.java
 	rm -f *.class
-	rm -f *.class~
+	rm -f *~

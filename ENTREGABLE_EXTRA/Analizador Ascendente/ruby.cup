@@ -15,6 +15,7 @@
 
 import java_cup.runtime.*;
 import java.io.*;
+import java.util.ArrayList;
 
 parser code {:
 	public static void main(String args[]) throws Exception {
@@ -34,44 +35,46 @@ parser code {:
 
 
 terminal ID, ID_GLOBAL, ID_FUNCTION,ID_ITER;
-terminal INT;
-terminal FLOAT;
-terminal NIL, LITERAL, COMMA, DOT, SEMICOLON, CRLF,DO;
+terminal Double FLOAT;
+terminal COMMA, DOT, SEMICOLON, CRLF,DO;
 terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
 terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
 
+terminal Object NIL;
+terminal Integer INT;
+terminal String LITERAL;
 
 non terminal prog,
-expression_list,
-expression,
 terminator,
 single_object,
 function_definition,
 class_block,
-if_statement,
-unless_statement,
 rvalue ,
 return_statement,
-while_statement,
-case_statement,
 function_definition_header,
-function_definition_body,
-if_elsif_statement,
 array_assignment,
-int_result,
-float_result,
-string_result,
 assignment,
-lvalue,
 function_call,
 bool_t,
-while_expression_list,
 function_definition_params,
 function_definition_params_list,
 array_definition,
 array_definition_elements,
-when_statement,
-do_statement;
+when_statement;
+
+non terminal String lvalue;
+non terminal Case case_statement;
+non terminal Do do_statement;
+non terminal While while_statement;
+non terminal ListaExpresion while_expression_list;
+non terminal Ifstatement if_statement;
+non terminal Ifstatement if_elsif_statement ;
+non terminal Unless unless_statement;
+non terminal Double float_result;
+non terminal String string_result;
+non terminal Integer int_result;
+non terminal ListaExpresion expression_list;
+non terminal Expresion expression;
 
 precedence left EXP_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN, DIV_ASSIGN,ASSIGN;
 precedence left OR;
@@ -93,23 +96,35 @@ precedence left LEFT_RBRACKET,  RIGHT_RBRACKET, RIGHT_SBRACKET, LEFT_SBRACKET;
 
 start with prog;
 
-prog ::= expression_list:e1 {: System.out.println(e1+" function_definition_params 1"); :}
+prog ::= expression_list:el {: System.out.println("PROG"); :}
 ;
 
-expression_list ::= expression terminator
-| expression_list expression terminator
-| terminator
+expression_list ::= expression:e terminator {: System.out.println("expression terminator"); :}
+| expression_list:el expression:e terminator  {: System.out.println("expression_list terminator"); :}
+| terminator {: System.out.println("terminator (expression_list)"); :}
 ;
 
 expression ::=  function_definition
-| if_statement
-| unless_statement
-| rvalue
-| return_statement
-| while_statement
-| do_statement
-| case_statement
+| if_statement:f {: RESULT=f; :}
+| unless_statement:u {: RESULT= u; :}
+| rvalue:v {: RESULT=Expresion.getExpresion(v); :}
+| return_statement:v {: RESULT=Expresion.getExpresion(v); :}
+| while_statement:v    {: RESULT=v; :}
+| do_statement:v       {: RESULT=v; :}
+| case_statement:v     {: RESULT=v; :}
 | class_block
+;
+
+if_statement ::=  IF rvalue:c CRLF expression_list:l1 END {: RESULT=new Ifstatement(c,l1); :}
+| IF rvalue:c THEN expression_list:l1 END  {: RESULT=new Ifstatement(c,l1); :}
+| IF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 END {: RESULT=new Ifstatement(c,l1,l2); :}
+| IF rvalue:c THEN expression_list:l1 ELSE expression_list:l2 END  {: RESULT=new Ifstatement(c,l1,l2); :}
+| IF rvalue:c CRLF expression_list:l1 if_elsif_statement:els END {: RESULT=new Ifstatement(c,l1,els); :}
+;
+
+if_elsif_statement ::= ELSIF rvalue:c CRLF expression_list:l1 {: RESULT=new Ifstatement(c,l1); :}
+| ELSIF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 {: RESULT=new Ifstatement(c,l1,l2); :}
+| ELSIF rvalue:c CRLF expression_list:l1 if_elsif_statement:els {: RESULT=new Ifstatement(c,l1,els); :}
 ;
 
 terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF
@@ -136,29 +151,17 @@ function_definition_params_list ::=  lvalue
 class_block ::=  REQUIRE LITERAL
 ;
 
-if_statement ::=  IF rvalue CRLF expression_list END
-| IF rvalue THEN expression_list END
-| IF rvalue CRLF expression_list ELSE CRLF expression_list END
-| IF rvalue THEN expression_list ELSE expression_list END
-| IF rvalue CRLF expression_list if_elsif_statement END
-;
-
-if_elsif_statement ::= ELSIF rvalue CRLF expression_list
-| ELSIF rvalue CRLF expression_list ELSE CRLF expression_list
-| ELSIF rvalue CRLF expression_list if_elsif_statement
-;
-
-unless_statement ::= UNLESS rvalue CRLF expression_list END
+unless_statement ::= UNLESS rvalue:c CRLF expression_list:l1 END {: RESULT=new Unless(c,l1); :}
 ;
 
 rvalue ::= array_assignment
-| int_result
-| float_result
-| string_result
+| int_result:s {: RESULT=s; :}
+| float_result:s {: RESULT=s; :}
+| string_result:s {: RESULT=s; :}
 | assignment
 | lvalue function_call
 | bool_t
-| NIL
+| NIL {: RESULT=null; :}
 | rvalue EXP rvalue
 | NOT rvalue
 | BIT_NOT rvalue
@@ -180,7 +183,7 @@ rvalue ::= array_assignment
 | rvalue NOT_EQUAL rvalue
 | rvalue OR rvalue
 | rvalue AND rvalue
-| LEFT_RBRACKET rvalue RIGHT_RBRACKET
+| LEFT_RBRACKET rvalue:a RIGHT_RBRACKET {: RESULT=a; :}
 ;
 
 single_object ::= INT
@@ -191,11 +194,22 @@ single_object ::= INT
 | NIL :e1 {: System.out.println(e1+" ID_GLOBAL"); :}
 ;
 
-return_statement ::=  RETURN rvalue
+return_statement ::=  RETURN rvalue:v {: RESULT = v; :}
 ;
 
-while_statement ::=  WHILE rvalue CRLF while_expression_list END
+while_statement ::=  WHILE rvalue:c CRLF while_expression_list:l END {: RESULT= new While(c,l); :}
 ;
+
+while_expression_list ::=  expression:e terminator {: RESULT=new ListaExpresion(e);  :}
+| RETRY terminator  {: RESULT=new ListaExpresion(new Valor<Object>(null)); :}
+| BREAK terminator  {: RESULT=new ListaExpresion(new Valor<Object>(null)); :}
+| while_expression_list:l expression:e terminator {: l.addExpresion(e); RESULT=l; :}
+| while_expression_list:l RETRY terminator   {: RESULT=l; :}
+| while_expression_list:l BREAK terminator   {: RESULT=l; :}
+;
+
+
+
 
 lvalue ::= ID_GLOBAL:e1 {: System.out.println(e1+" ID_GLOBAL"); :}
 | ID:e1 {: System.out.println(e1+" ID"); :}
@@ -223,35 +237,42 @@ when_statement ::= WHEN array_definition_elements CRLF expression_list
 | ELSE CRLF expression CRLF
 ;
 
-int_result ::= int_result MUL int_result
-| int_result DIV int_result
-| int_result MOD int_result
-| int_result PLUS int_result
-| int_result MINUS int_result
-| INT
+int_result ::= int_result:a MUL int_result:b {: RESULT = a * b; :}
+| int_result:a DIV int_result:b  {: RESULT = a / b; :}
+| int_result:a MOD int_result:b {: RESULT = a % b; :}
+| int_result:a PLUS int_result:b {: RESULT = a + b; :}
+| int_result:a MINUS int_result:b {: RESULT = a - b; :}
+| INT:i {: RESULT=i;  :}
 ;
 
-string_result ::= string_result MUL int_result
-| int_result MUL string_result
-| LITERAL
+string_result ::= string_result:s MUL int_result:n
+                                    {:  String aux="";
+                                    for(int i = 0; i++< n; aux += s);
+                                    	RESULT = aux;
+                                    :}
+| int_result:n MUL string_result:s
+									{:  String aux="";
+									for(int i = 0; i ++< n; aux += s);
+										RESULT = aux; :}
+									| LITERAL:s {: RESULT = s; :}
 ;
 
-float_result ::= float_result MUL float_result
-| float_result DIV float_result
-| float_result MOD float_result
-| int_result MUL float_result
-| int_result DIV float_result
-| int_result MOD float_result
-| float_result MUL int_result
-| float_result DIV int_result
-| float_result MOD int_result
-| float_result PLUS float_result
-| float_result MINUS float_result
-| int_result PLUS float_result
-| int_result MINUS float_result
-| float_result PLUS int_result
-| float_result MINUS int_result
-| FLOAT
+float_result ::= float_result:f MUL float_result:f2 {: RESULT = f * f2; :}
+| float_result:f DIV float_result:f2 {: RESULT = f / f2; :}
+| float_result:f MOD float_result:f2  {: RESULT = f % f2; :}
+| int_result:i MUL float_result:f {: RESULT = i * f; :}
+| int_result:i DIV float_result:f {: RESULT = i / f; :}
+| int_result:i MOD float_result:f {: RESULT = i % f; :}
+| float_result:f MUL int_result:i {: RESULT = f * i; :}
+| float_result:f DIV int_result:i {: RESULT = f / i; :}
+| float_result:f MOD int_result:i {: RESULT = f % i; :}
+| float_result:f PLUS float_result:f2 {: RESULT = f + f2; :}
+| float_result:f MINUS float_result:f2  {: RESULT = f - f2; :}
+| int_result:i PLUS float_result:f  {: RESULT = i + f; :}
+| int_result:i MINUS float_result:f  {: RESULT = i - f; :}
+| float_result:f PLUS int_result:i  {: RESULT = f + i; :}
+| float_result:f MINUS int_result:i {: RESULT = f - i; :}
+| FLOAT:f {: RESULT=f; :}
 ;
 
 assignment ::= lvalue PLUS_ASSIGN rvalue
@@ -272,16 +293,11 @@ function_call ::= LEFT_SBRACKET function_definition_params RIGHT_SBRACKET
 bool_t ::= TRUE | FALSE
 ;
 
-while_expression_list ::=  expression terminator
-| RETRY terminator
-| BREAK terminator
-| while_expression_list expression terminator
-| while_expression_list RETRY terminator
-| while_expression_list BREAK terminator
+case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
 ;
 
-case_statement ::= CASE lvalue CRLF when_statement END
-;
+//do_statement ::= lvalue:c DO ID_ITER expression_list:l END {: RESULT=new Do(c,l); :}
+//;   Cambiar por este cuando este hecho lvalue
 
-do_statement ::= lvalue DO ID_ITER expression_list END
+do_statement ::= rvalue:c DO ID_ITER expression_list:l END {: RESULT = new Do(c,l); :}
 ;
