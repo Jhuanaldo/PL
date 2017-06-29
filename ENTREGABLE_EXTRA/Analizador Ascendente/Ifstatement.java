@@ -1,51 +1,63 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package analizadores;
+
 import java.util.ArrayList;
 
 /**
  *
  * @author ordenador
  */
-public class Ifstatement extends Expresion{
+public class If_statement extends Expresion {
 
-    protected boolean condicion;
-    protected ListaExpresion listaIf;
-    protected ListaExpresion listaElse;
-    protected Ifstatement elsif;
+    private ArrayList<Expresion> listaExpresion;
+    private ArrayList<Expresion> listaExpresion2;
+    private Valor condicion;
+    private If_statement ifelsif;
 
-
-    public Ifstatement(Object condicion,ListaExpresion listaBloqueIf){
-        this.condicion=getCondicion(condicion);
-        this.listaIf=listaBloqueIf;
-        this.listaElse=null;
-        this.elsif=null;
+    public If_statement(Valor condicion, ArrayList<Expresion> listaExpresion, ArrayList<Expresion> listaExpresion2) {
+        this.listaExpresion = listaExpresion;
+        this.listaExpresion2 = listaExpresion2;
+        this.condicion = condicion;
     }
-    public Ifstatement(Object condicion,ListaExpresion listaBloqueIf,ListaExpresion listaBloqueElse){
-        this.condicion=getCondicion(condicion);
-        this.listaIf=listaBloqueIf;
-        this.listaElse=listaBloqueElse;
-        this.elsif=null;
-    }
-    public Ifstatement(Object condicion,ListaExpresion listaBloqueIf,Ifstatement elsif){
-        this(condicion,listaBloqueIf);
-        this.elsif=elsif;
+
+    public If_statement(Valor condicion, ArrayList<Expresion> listaExpresion, ArrayList<Expresion> listaExpresion2,
+            If_statement ifelsif) {
+        this(condicion, listaExpresion, listaExpresion2);
+        this.ifelsif = ifelsif;
     }
 
     @Override
-    public void ejecutar() {
-        if(this.condicion){
-            this.listaIf.ejecutar();
-        }else{
-            if(this.listaElse!=null){
-                this.listaElse.ejecutar();
-            }else if(elsif!=null){
-                elsif.ejecutar();
-            }
+    public Object ejecutar() {
+        Object r="";
+        Object aux=null;
+        while (!condicion.basico()) {
+            condicion.ejecutar();
+            condicion = (Valor) condicion.getValor();
         }
-    }
+        if (condicion.getBoolean()) {
+            for (Expresion e : this.listaExpresion) {
+                aux=e.ejecutar();
+                r+=aux==null||aux==""?"":aux+"\n";
 
-    private boolean getCondicion(Object condicion) {
-        boolean r=false;  //repasar como se forman las condiciones en ruby
-        if(condicion instanceof String){
+            }
+        } else {
+            if (ifelsif == null) {
+                if (this.listaExpresion2 != null) {
+                    for (Expresion e : this.listaExpresion2) {
+                        aux=e.ejecutar();
+                        r+=aux==null||aux==""?"":aux+"\n";
+                    }
+                }
+            }else{
+                aux=this.ifelsif.ejecutar();
+                r+=aux==null||aux==""?"":aux+"\n";
+            }
         }
         return r;
     }
+
 }
