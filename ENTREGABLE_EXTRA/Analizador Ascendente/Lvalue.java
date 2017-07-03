@@ -22,8 +22,7 @@ public class Lvalue  extends Valor {
     public Object ejecutar(){
 
         Valor a=this.getValor();
-        if(a instanceof Expresion){
-            ((Expresion)a).ejecutar();
+        if(a !=null){
             this.valor=((Valor)a).getValor();
         }
         return this.valor;
@@ -32,7 +31,6 @@ public class Lvalue  extends Valor {
     
     @Override
     public Valor getValor(){    
-
         this.valor=(Valor) TablaSimbolos.getTablaSimbolos().get(id);
         return (Valor) this.valor;
     }

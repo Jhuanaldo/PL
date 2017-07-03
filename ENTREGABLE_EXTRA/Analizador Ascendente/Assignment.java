@@ -21,6 +21,9 @@ public class Assignment<Tipo> extends Valor<Tipo> {
    
     @Override
     public Object ejecutar() {
+        if(this.valor instanceof Valor){
+            ((Valor) this.valor).ejecutar();
+        }
         TablaSimbolos.getTablaSimbolos().put(this.id, (Valor) this.valor);
         return null;
     }

@@ -6,7 +6,7 @@ package analizadores;
  */
 public class Valor<Tipo> extends Expresion {
 
-    protected Tipo valor;
+    public Tipo valor;
 
     @Override
     public Object ejecutar() {
@@ -25,35 +25,7 @@ public class Valor<Tipo> extends Expresion {
         this.valor = valor;
     }
 
-    public Valor sum(Valor v2) {
-        Valor r = null;
-        if (this.valor instanceof Integer && v2.getValor() instanceof Integer) {
-            r = new Valor((Integer) this.valor + (Integer) v2.valor);
-        } else if (this.valor instanceof Double && v2.getValor() instanceof Double) {
-            r = new Valor((Double) this.valor + (Double) v2.valor);
-        } else if ((this.valor instanceof Integer && v2.getValor() instanceof Double)) {
-            r = new Valor((Integer) this.valor + (Double) v2.valor);
-        } else if (this.valor instanceof Double && v2.getValor() instanceof Integer) {
-            r = new Valor((Double) this.valor + (Integer) v2.valor);
 
-        } else if ((this.valor instanceof Integer && v2.getValor() instanceof Integer)) {
-            r = new Valor((Integer) this.valor + (Integer) v2.valor);
-
-        } else if (this.valor instanceof Integer && v2.getValor() instanceof String) {
-            r = new Valor((Integer) this.valor + (String) v2.valor);
-        } else if (this.valor instanceof String && v2.getValor() instanceof Integer) {
-            r = new Valor((String) this.valor + (Integer) v2.valor);
-
-        } else if (this.valor instanceof Double && v2.getValor() instanceof String) {
-            r = new Valor((Double) this.valor + (String) v2.valor);
-        } else if (this.valor instanceof String && v2.getValor() instanceof Double) {
-            r = new Valor((String) this.valor + (Double) v2.valor);
-        } else if (this.valor instanceof String && v2.getValor() instanceof String) {
-            r = new Valor((String) this.valor + (String) v2.valor);
-        }
-//            this.valor+v2.valor;
-        return r;
-    }
 
     public Boolean getBoolean() {
         Boolean r = false;
@@ -69,7 +41,8 @@ public class Valor<Tipo> extends Expresion {
                     : ((String) valor).equals("0") ? false
                     : ((String) valor).equals("false") ? false
                     : ((String) valor).equals("null") ? false
-                    : ((String) valor).equals("") ? false : false;
+                    : ((String) valor).equals("") ? false 
+                    :false;
             r = new Boolean(a);
         }
         return r;
@@ -86,31 +59,3 @@ public class Valor<Tipo> extends Expresion {
     }
 }
 
-/*
- if (this.valor instanceof Integer && v2.getValor() instanceof Integer) {
-            r = new Valor((Integer) this.valor + (Integer) v2.valor);
-        } else if (this.valor instanceof Double && v2.getValor() instanceof Double) {
-            r = new Valor((Double) this.valor + (Double) v2.valor);
-        } else if ((this.valor instanceof Integer && v2.getValor() instanceof Double)) {
-            r = new Valor((Integer) this.valor + (Double) v2.valor);
-        } else if (this.valor instanceof Double && v2.getValor() instanceof Integer) {
-            r = new Valor((Double) this.valor + (Integer) v2.valor);
-
-        } else if ((this.valor instanceof Integer && v2.getValor() instanceof Integer)) {
-            r = new Valor((Integer) this.valor + (Integer) v2.valor);
-
-        } else if (this.valor instanceof Integer && v2.getValor() instanceof String) {
-            r = new Valor((Integer) this.valor + (String) v2.valor);
-        } else if (this.valor instanceof String && v2.getValor() instanceof Integer) {
-            r = new Valor((String) this.valor + (Integer) v2.valor);
-
-        } else if (this.valor instanceof Double && v2.getValor() instanceof String) {
-            r = new Valor((Double) this.valor + (String) v2.valor);
-        } else if (this.valor instanceof String && v2.getValor() instanceof Double) {
-            r = new Valor((String) this.valor + (Double) v2.valor);
-        } else if (this.valor instanceof String && v2.getValor() instanceof String) {
-            r = new Valor((String) this.valor + (String) v2.valor);
-        }
-
-
- */

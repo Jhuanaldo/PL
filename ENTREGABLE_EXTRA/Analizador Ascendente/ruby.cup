@@ -1,45 +1,25 @@
-//////////////////////////////////////////////////
-//												//
-//												//
-//												//
-//			cosas importantes:					//
-//				ID ESTÁ ROTO					//
-//				LITERAL ESTÁ ROTO				//
-//												//
-//												//
-//												//
-//												//
-//												//
-//												//
-//////////////////////////////////////////////////
+package analizadores;
 
 import java_cup.runtime.*;
 import java.io.*;
 import java.util.ArrayList;
 
 parser code {:
-	public static void main(String args[]) throws Exception {
-		FileInputStream fichero=new FileInputStream(args[0]);
-		DataInputStream entrada =new DataInputStream(fichero);
-		try{
-			new parser(new Yylex(new BufferedReader(new InputStreamReader(entrada)))).parse();
-		}
-		catch ( Exception e) {
-			e.printStackTrace();
-			System.out.println(" Análisis INCORRECTO !! :_(");
-				System.exit(1);
-			}
-			System.out.println("Análisis Correcto!!!<3");
-		}
+	
 :}
 
+action code {: 
+    public static TablaSimbolos tablaSimbolos=TablaSimbolos.getTablaSimbolos();
+ :}
 
-terminal ID, ID_GLOBAL, ID_FUNCTION,ID_ITER;
+
+
 terminal Double FLOAT;
 terminal COMMA, DOT, SEMICOLON, CRLF,DO;
 terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
 terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
 
+terminal String ID, ID_GLOBAL, ID_FUNCTION,ID_ITER;
 terminal Object NIL;
 terminal Integer INT;
 terminal String LITERAL;
@@ -49,32 +29,35 @@ terminator,
 single_object,
 function_definition,
 class_block,
-rvalue ,
-return_statement,
 function_definition_header,
 array_assignment,
-assignment,
-function_call,
-bool_t,
-function_definition_params,
-function_definition_params_list,
 array_definition,
 array_definition_elements,
 when_statement;
 
+
+non terminal ArrayList<String> function_definition_params;
+non terminal ArrayList<String> function_call;
+non terminal ArrayList<String> function_definition_params_list;
+non terminal ArrayList<Expresion> expression_list;
+non terminal Expresion expression;
+non terminal If_statement if_statement;
+non terminal If_statement if_elsif_statement ;
+non terminal Unless_statement unless_statement;
+non terminal ArrayList<Expresion> while_expression_list;
+non terminal While_statement while_statement;
+
+
+non terminal return_statement;
+non terminal Assignment assignment;
+non terminal Boolean bool_t;
+non terminal Valor rvalue;
 non terminal String lvalue;
-non terminal Case case_statement;
-non terminal Do do_statement;
-non terminal While while_statement;
-non terminal ListaExpresion while_expression_list;
-non terminal Ifstatement if_statement;
-non terminal Ifstatement if_elsif_statement ;
-non terminal Unless unless_statement;
+non terminal case_statement;
+non terminal do_statement;
 non terminal Double float_result;
 non terminal String string_result;
 non terminal Integer int_result;
-non terminal ListaExpresion expression_list;
-non terminal Expresion expression;
 
 precedence left EXP_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN, DIV_ASSIGN,ASSIGN;
 precedence left OR;
@@ -96,35 +79,72 @@ precedence left LEFT_RBRACKET,  RIGHT_RBRACKET, RIGHT_SBRACKET, LEFT_SBRACKET;
 
 start with prog;
 
-prog ::= expression_list:el {: System.out.println("PROG"); :}
+prog ::= expression_list:el {: 
+    for(Expresion e:el){
+        if(e!=null){
+            Object o=e.ejecutar();
+            if(o!=null){
+                System.out.println(o);
+            }
+        }
+    }
+ :}
 ;
 
-expression_list ::= expression:e terminator {: System.out.println("expression terminator"); :}
-| expression_list:el expression:e terminator  {: System.out.println("expression_list terminator"); :}
-| terminator {: System.out.println("terminator (expression_list)"); :}
+expression_list ::= expression:e terminator {: 
+    ArrayList <Expresion>l=new ArrayList<Expresion>();
+    l.add(e);
+    RESULT=l;
+    :}
+
+| expression_list:el expression:e terminator  {: 
+        el.add(e);
+        RESULT=el;
+     :}
+| terminator
 ;
 
 expression ::=  function_definition
+| rvalue:v {: RESULT=v; :}
 | if_statement:f {: RESULT=f; :}
-| unless_statement:u {: RESULT= u; :}
-| rvalue:v {: RESULT=Expresion.getExpresion(v); :}
-| return_statement:v {: RESULT=Expresion.getExpresion(v); :}
-| while_statement:v    {: RESULT=v; :}
-| do_statement:v       {: RESULT=v; :}
-| case_statement:v     {: RESULT=v; :}
+| unless_statement:u {: RESULT=u; :} 
+| while_statement:w    {: RESULT=w; :}
+| do_statement:v       {: :}
+| case_statement:v     {: :}
 | class_block
+| return_statement:v  {:  :}
 ;
 
-if_statement ::=  IF rvalue:c CRLF expression_list:l1 END {: RESULT=new Ifstatement(c,l1); :}
-| IF rvalue:c THEN expression_list:l1 END  {: RESULT=new Ifstatement(c,l1); :}
-| IF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 END {: RESULT=new Ifstatement(c,l1,l2); :}
-| IF rvalue:c THEN expression_list:l1 ELSE expression_list:l2 END  {: RESULT=new Ifstatement(c,l1,l2); :}
-| IF rvalue:c CRLF expression_list:l1 if_elsif_statement:els END {: RESULT=new Ifstatement(c,l1,els); :}
+while_statement ::=  WHILE rvalue:c CRLF while_expression_list:l END {: RESULT=new While_statement(c,l); :}
 ;
 
-if_elsif_statement ::= ELSIF rvalue:c CRLF expression_list:l1 {: RESULT=new Ifstatement(c,l1); :}
-| ELSIF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 {: RESULT=new Ifstatement(c,l1,l2); :}
-| ELSIF rvalue:c CRLF expression_list:l1 if_elsif_statement:els {: RESULT=new Ifstatement(c,l1,els); :}
+while_expression_list ::=  expression:e terminator {: ArrayList<Expresion> l=new ArrayList<Expresion>();
+                                                       l.add(e); RESULT=l; :}
+| RETRY terminator  {: RESULT=new ArrayList<Expresion>(); :}
+| BREAK terminator  {: RESULT=new ArrayList<Expresion>(); :}
+| while_expression_list:l expression:e terminator {: l.add(e); RESULT=l; :}
+| while_expression_list:l RETRY terminator   {: RESULT=l; :}
+| while_expression_list:l BREAK terminator   {: RESULT=l; :}
+;
+
+
+
+
+unless_statement ::= UNLESS rvalue:c CRLF expression_list:l1 END {: RESULT=new Unless_statement(c,l1);  :}
+;
+
+
+
+if_statement ::=  IF rvalue:c CRLF expression_list:l1 END {: RESULT=new If_statement(c,l1,null); :}
+| IF rvalue:c THEN expression_list:l1 END  {: RESULT=new If_statement(c,l1,null); :}
+| IF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 END {: RESULT=new If_statement(c,l1,l2); :}
+| IF rvalue:c THEN expression_list:l1 ELSE expression_list:l2 END  {: RESULT=new If_statement(c,l1,l2); :}
+| IF rvalue:c CRLF expression_list:l1 if_elsif_statement:els END {: RESULT=new If_statement(c,l1,null,els); :}
+;
+
+if_elsif_statement ::= ELSIF rvalue:c CRLF expression_list:l1 {: RESULT=new If_statement(c,l1,null); :}
+| ELSIF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 {: RESULT=new If_statement(c,l1,l2); :}
+| ELSIF rvalue:c CRLF expression_list:l1 if_elsif_statement:els {: RESULT=new If_statement(c,l1,null,els); :}
 ;
 
 terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF
@@ -133,58 +153,58 @@ terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF
 function_definition ::=  function_definition_header expression_list END
 ;
 
-function_definition_header ::=  DEF lvalue function_definition_params CRLF | DEF lvalue CRLF
+function_definition_header ::=  DEF ID_FUNCTION function_definition_params CRLF | DEF lvalue CRLF
 ;
 
-function_definition_params ::=  LEFT_RBRACKET RIGHT_RBRACKET
-| LEFT_RBRACKET function_definition_params_list:e1 RIGHT_RBRACKET {: System.out.println(e1+" function_definition_params 1"); :}
-| function_definition_params_list:e1 {: System.out.println(e1+" function_definition_params 2"); :}
+function_definition_params ::=  LEFT_RBRACKET RIGHT_RBRACKET {: RESULT=new ArrayList<String>();  :}
+| LEFT_RBRACKET function_definition_params_list:e1 RIGHT_RBRACKET {: RESULT=e1; :}
+| function_definition_params_list:e1 {: RESULT=e1; :}
 ;
 
-// function_definition_body ::=  expression_list // MIRAR ಠ_ಠ ಠ_ಠ
-// ;
 
-function_definition_params_list ::=  lvalue
-| function_definition_params_list COMMA lvalue
+function_definition_params_list ::=  lvalue:s {: ArrayList <String>l=new ArrayList<String>();l.add(s);RESULT=l; :}
+| function_definition_params_list:l COMMA lvalue:s {: l.add(s); RESULT=l;  :}
 ;
 
 class_block ::=  REQUIRE LITERAL
 ;
 
-unless_statement ::= UNLESS rvalue:c CRLF expression_list:l1 END {: RESULT=new Unless(c,l1); :}
-;
 
 rvalue ::= array_assignment
-| int_result:s {: RESULT=s; :}
-| float_result:s {: RESULT=s; :}
-| string_result:s {: RESULT=s; :}
-| assignment
-| lvalue function_call
-| bool_t
-| NIL {: RESULT=null; :}
-| rvalue EXP rvalue
-| NOT rvalue
+| int_result:s {: RESULT=new Valor(s); :}
+| float_result:s {: RESULT=new Valor(s); :} 
+| string_result:s {: RESULT=new Valor(s); :}
+| NIL {: RESULT=new Valor(null); :}
+| bool_t:s {: RESULT=new Valor(s); :} 
+| assignment:a {: RESULT= a; :}
+| lvalue:s {: RESULT= new Lvalue(s); :}
+| lvalue:l function_call:fc {:     :}      //////////////
 | BIT_NOT rvalue
-| rvalue MUL rvalue
-| rvalue DIV rvalue
-| rvalue MOD rvalue
-| rvalue PLUS rvalue
-| rvalue MINUS rvalue
+| rvalue:a PLUS rvalue:b  {: Operacion o=new Operacion(a,"+",b); RESULT=o; :}
+| rvalue:a MINUS rvalue:b  {: Operacion o=new Operacion(a,"-",b); RESULT=o; :}
+| rvalue:a MUL rvalue:b {: Operacion o=new Operacion(a,"x",b); RESULT=o;  :}
+| rvalue:a DIV rvalue:b {: Operacion o=new Operacion(a,"/",b); RESULT=o; :}
+| rvalue:a MOD rvalue:b {: Operacion o=new Operacion(a,"%",b); RESULT=o; :}
+| rvalue:a EXP rvalue:b {: Operacion o=new Operacion(a,"**",b); RESULT=o; :}
 | rvalue BIT_SHL rvalue
 | rvalue BIT_SHR rvalue
 | rvalue BIT_AND rvalue
 | rvalue BIT_OR rvalue
 | rvalue BIT_XOR rvalue
-| rvalue LESS rvalue
-| rvalue GREATER rvalue
-| rvalue LESS_EQUAL rvalue
-| rvalue GREATER_EQUAL rvalue
-| rvalue EQUAL rvalue
-| rvalue NOT_EQUAL rvalue
-| rvalue OR rvalue
-| rvalue AND rvalue
-| LEFT_RBRACKET rvalue:a RIGHT_RBRACKET {: RESULT=a; :}
+| rvalue:a LESS rvalue:b     {: Operacion o=new Operacion(a,"<",b); RESULT=o; :}
+| rvalue:a GREATER rvalue:b  {: Operacion o=new Operacion(a,"<",b); RESULT=o; :}
+| rvalue:a LESS_EQUAL rvalue:b {: Operacion o=new Operacion(a,"<=",b); RESULT=o; :}
+| rvalue:a GREATER_EQUAL rvalue:b {: Operacion o=new Operacion(a,">=",b); RESULT=o; :}
+| rvalue:a EQUAL rvalue:b  {: Operacion o=new Operacion(a,"=",b); RESULT=o; :}
+| NOT rvalue:a {: Operacion o=new Operacion(a,"!",null); RESULT=o; :}
+| rvalue:a NOT_EQUAL rvalue:b {: Operacion o=new Operacion(a,"!=",b); RESULT=o; :}
+| rvalue:a OR rvalue:b {: Operacion o=new Operacion(a,"||",b); RESULT=o; :}
+| rvalue:a AND rvalue:b {: Operacion o=new Operacion(a,"&&",b); RESULT=o; :}
+| LEFT_RBRACKET rvalue:a RIGHT_RBRACKET {:   RESULT=a; :}
 ;
+
+
+
 
 single_object ::= INT
 | FLOAT :e1 {: System.out.println(e1+" ID_GLOBAL"); :}
@@ -194,27 +214,21 @@ single_object ::= INT
 | NIL :e1 {: System.out.println(e1+" ID_GLOBAL"); :}
 ;
 
-return_statement ::=  RETURN rvalue:v {: RESULT = v; :}
-;
-
-while_statement ::=  WHILE rvalue:c CRLF while_expression_list:l END {: RESULT= new While(c,l); :}
-;
-
-while_expression_list ::=  expression:e terminator {: RESULT=new ListaExpresion(e);  :}
-| RETRY terminator  {: RESULT=new ListaExpresion(new Valor<Object>(null)); :}
-| BREAK terminator  {: RESULT=new ListaExpresion(new Valor<Object>(null)); :}
-| while_expression_list:l expression:e terminator {: l.addExpresion(e); RESULT=l; :}
-| while_expression_list:l RETRY terminator   {: RESULT=l; :}
-| while_expression_list:l BREAK terminator   {: RESULT=l; :}
+return_statement ::=  RETURN rvalue:v {:  :}
 ;
 
 
 
-
-lvalue ::= ID_GLOBAL:e1 {: System.out.println(e1+" ID_GLOBAL"); :}
-| ID:e1 {: System.out.println(e1+" ID"); :}
-| ID DOT ID_FUNCTION:e1 {: System.out.println(e1+" ID DOT"); :}
-| ID_FUNCTION:e1 {: System.out.println(e1+" ID_FUNCTION"); :}
+lvalue ::= ID_GLOBAL:e1 {: RESULT=e1; :}
+| ID:e1 {: RESULT=e1; :}
+| ID:id DOT ID_FUNCTION:idf {: 
+            /*
+                Objeto o=(Objeto)tablaSimbolos.get(id);
+                Funcion f=o.getFuncion(idf);
+                f.ejecutar();
+            */
+ :}
+| ID_FUNCTION:e1 {: RESULT=e1; :}
 ;
 
 array_assignment ::= rvalue array_definition ASSIGN rvalue
@@ -237,67 +251,76 @@ when_statement ::= WHEN array_definition_elements CRLF expression_list
 | ELSE CRLF expression CRLF
 ;
 
-int_result ::= int_result:a MUL int_result:b {: RESULT = a * b; :}
-| int_result:a DIV int_result:b  {: RESULT = a / b; :}
-| int_result:a MOD int_result:b {: RESULT = a % b; :}
-| int_result:a PLUS int_result:b {: RESULT = a + b; :}
-| int_result:a MINUS int_result:b {: RESULT = a - b; :}
+int_result ::= int_result:a MUL int_result:b {: RESULT=a*b; :}
+| int_result:a DIV int_result:b  {: RESULT=a/b; :}
+| int_result:a MOD int_result:b {: RESULT=a%b; :}
+| int_result:a PLUS int_result:b {: RESULT=a+b; :}
+| int_result:a MINUS int_result:b {: RESULT=a-b; :}
 | INT:i {: RESULT=i;  :}
 ;
 
 string_result ::= string_result:s MUL int_result:n
-                                    {:  String aux="";
-                                    for(int i = 0; i++< n; aux += s);
-                                    	RESULT = aux;
-                                    :}
-| int_result:n MUL string_result:s
-									{:  String aux="";
-									for(int i = 0; i ++< n; aux += s);
-										RESULT = aux; :}
-									| LITERAL:s {: RESULT = s; :}
+                                    {: String aux="";
+                                       for(int i=0;i++<n;aux+=s); 
+                                       RESULT=aux; :}
+| int_result:n MUL string_result:s 
+{:  String aux="";
+                                       for(int i=0;i++<n;aux+=s); 
+                                       RESULT=aux; :}
+| LITERAL:s {: RESULT=s; :} 
 ;
 
-float_result ::= float_result:f MUL float_result:f2 {: RESULT = f * f2; :}
-| float_result:f DIV float_result:f2 {: RESULT = f / f2; :}
-| float_result:f MOD float_result:f2  {: RESULT = f % f2; :}
-| int_result:i MUL float_result:f {: RESULT = i * f; :}
-| int_result:i DIV float_result:f {: RESULT = i / f; :}
-| int_result:i MOD float_result:f {: RESULT = i % f; :}
-| float_result:f MUL int_result:i {: RESULT = f * i; :}
-| float_result:f DIV int_result:i {: RESULT = f / i; :}
-| float_result:f MOD int_result:i {: RESULT = f % i; :}
-| float_result:f PLUS float_result:f2 {: RESULT = f + f2; :}
-| float_result:f MINUS float_result:f2  {: RESULT = f - f2; :}
-| int_result:i PLUS float_result:f  {: RESULT = i + f; :}
-| int_result:i MINUS float_result:f  {: RESULT = i - f; :}
-| float_result:f PLUS int_result:i  {: RESULT = f + i; :}
-| float_result:f MINUS int_result:i {: RESULT = f - i; :}
+float_result ::= float_result:f MUL float_result:f2 {: RESULT=f*f2; :}
+| float_result:f DIV float_result:f2 {: RESULT=f/f2; :}
+| float_result:f MOD float_result:f2  {: RESULT=f%f2; :}
+| int_result:i MUL float_result:f {: RESULT=i*f; :}
+| int_result:i DIV float_result:f {: RESULT=i/f; :}
+| int_result:i MOD float_result:f {: RESULT=i%f; :}
+| float_result:f MUL int_result:i {: RESULT=f*i; :}
+| float_result:f DIV int_result:i {: RESULT=f/i; :}
+| float_result:f MOD int_result:i {: RESULT=f%i; :}
+| float_result:f PLUS float_result:f2 {: RESULT=f+f2; :}
+| float_result:f MINUS float_result:f2  {: RESULT=f-f2; :}
+| int_result:i PLUS float_result:f  {: RESULT=i+f; :}
+| int_result:i MINUS float_result:f  {: RESULT=i-f; :}
+| float_result:f PLUS int_result:i  {: RESULT=f+i; :}
+| float_result:f MINUS int_result:i {: RESULT=f-i; :}
 | FLOAT:f {: RESULT=f; :}
 ;
 
-assignment ::= lvalue PLUS_ASSIGN rvalue
-| lvalue  MINUS_ASSIGN rvalue
-| lvalue  MUL_ASSIGN rvalue
-| lvalue  DIV_ASSIGN rvalue
-| lvalue MOD_ASSIGN rvalue
-| lvalue EXP_ASSIGN rvalue
-| lvalue ASSIGN rvalue
+assignment ::= lvalue:s PLUS_ASSIGN rvalue:e {: 
+:}  
+| lvalue:s  MINUS_ASSIGN rvalue:e {: 
+:}  
+| lvalue:s  MUL_ASSIGN rvalue:e {: 
+:}  
+| lvalue:s  DIV_ASSIGN rvalue:e {: 
+
+
+:}  
+| lvalue:s MOD_ASSIGN rvalue:e  {: 
+
+
+ :}  
+| lvalue:s EXP_ASSIGN rvalue:e  {: 
+
+
+ :}  
+| lvalue:s ASSIGN rvalue:v      {:  
+    RESULT=new Assignment(s,v);
+ :}  
 ;
 
-function_call ::= LEFT_SBRACKET function_definition_params RIGHT_SBRACKET
-| function_definition_params
+function_call ::= LEFT_SBRACKET function_definition_params:f RIGHT_SBRACKET {:  :}
+| function_definition_params:f {:  :}
 | LEFT_SBRACKET RIGHT_SBRACKET
-|
 ;
 
-bool_t ::= TRUE | FALSE
+bool_t ::= TRUE {: RESULT=new Boolean(true); :} | FALSE {: RESULT=new Boolean(false); :}
 ;
 
 case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
 ;
 
-//do_statement ::= lvalue:c DO ID_ITER expression_list:l END {: RESULT=new Do(c,l); :}
-//;   Cambiar por este cuando este hecho lvalue
-
-do_statement ::= rvalue:c DO ID_ITER expression_list:l END {: RESULT = new Do(c,l); :}
+do_statement ::= lvalue:c DO ID_ITER expression_list:l END {:  :}
 ;

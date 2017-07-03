@@ -410,7 +410,6 @@ public class Operacion<Tipo> extends Valor {
 
     private Valor mul(Valor valor1, Valor valor2) {
         Object r = null;
-
         while (!basico(valor1)) {
             valor1.ejecutar();
             valor1 = (Valor) valor1.getValor();
