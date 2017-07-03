@@ -14,8 +14,8 @@ ejemplo5 : exec m5
 
 
 exec: clean
-	export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/cup.jar
-	export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/JLlex.jar
+	# export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/cup.jar
+	# export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/JLlex.jar
 	jflex Lex.flex
 	cup ruby.cup
 	javac *.java -Xdiags:verbose
