@@ -11,9 +11,4 @@ public class Case extends Expresion{
 
     public Case(){
     }
-    @Override
-    public void ejecutar() {
-    	System.out.println("Encontrado Case");
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

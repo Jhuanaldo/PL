@@ -34,6 +34,6 @@ m5:
 clean:
 	rm -f Yylex.java *~
 	rm -f parser.java
-	rm -f Sym.java
+	rm -f sym.java
 	rm -f *.class
 	rm -f *~

@@ -1,4 +1,4 @@
-package analizadores;
+
 
 public class Operacion extends Valor {
 
@@ -71,7 +71,6 @@ public class Operacion extends Valor {
 
     private Valor not(Valor valor1) {
         valor1.getValor();
-        System.out.println("no: "+getBoolean(valor1));
         return new Valor(!getBoolean(valor1));
     }
 

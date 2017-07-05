@@ -1,20 +1,22 @@
-/*
-    
-
-*/
-
-
-
-
-
-package analizadores;
 
 import java_cup.runtime.*;
 import java.io.*;
 import java.util.ArrayList;
 
 parser code {:
-	
+    public static void main(String args[]) throws Exception {
+        FileInputStream fichero=new FileInputStream(args[0]);
+        DataInputStream entrada =new DataInputStream(fichero);
+        try{
+            new parser(new Yylex(new BufferedReader(new InputStreamReader(entrada)))).parse();
+        }
+        catch ( Exception e) {
+            e.printStackTrace();
+            System.out.println(" Análisis INCORRECTO !! :_(");
+                System.exit(1);
+            }
+            System.out.println("Análisis Correcto!!!<3");
+        }
 :}
 
 action code {: 
