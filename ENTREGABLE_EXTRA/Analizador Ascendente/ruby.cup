@@ -1,3 +1,12 @@
+/*
+    
+
+*/
+
+
+
+
+
 package analizadores;
 
 import java_cup.runtime.*;
@@ -87,8 +96,8 @@ prog ::= expression_list:el {:
                 System.out.println(o);
             }
         }
-    }
- :}
+    } 
+:}
 ;
 
 expression_list ::= expression:e terminator {: 
@@ -324,3 +333,6 @@ case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
 
 do_statement ::= lvalue:c DO ID_ITER expression_list:l END {:  :}
 ;
+
+
+

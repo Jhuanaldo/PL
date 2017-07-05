@@ -3,6 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package analizadores;
+
 import java.util.ArrayList;
 
 /**
@@ -10,7 +12,7 @@ import java.util.ArrayList;
  * @author ordenador
  */
 public class ListaExpresion extends Expresion{
-
+    
     private ArrayList<Expresion> lista;
 
     public ListaExpresion(ArrayList<Expresion> lista) {
@@ -20,7 +22,7 @@ public class ListaExpresion extends Expresion{
         this.lista=new ArrayList<Expresion>();
         this.addExpresion(e);
     }
-
+    
     public void addExpresion(Expresion e){
         this.lista.add(e);
     }
@@ -35,5 +37,9 @@ public class ListaExpresion extends Expresion{
         for(Expresion e:lista){
             e.ejecutar();
         }
+        
     }
+    
+    
+    
 }
