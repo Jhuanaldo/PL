@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package analizadores;
+
 
 import java.util.ArrayList;
 
@@ -13,10 +13,10 @@ import java.util.ArrayList;
  */
 public class If_statement extends Expresion {
 
-    private ArrayList<Expresion> listaExpresion;
-    private ArrayList<Expresion> listaExpresion2;
-    private Valor condicion;
-    private If_statement ifelsif;
+    protected ArrayList<Expresion> listaExpresion;
+    protected ArrayList<Expresion> listaExpresion2;
+    protected Valor condicion;
+    protected If_statement ifelsif;
 
     public If_statement(Valor condicion, ArrayList<Expresion> listaExpresion, ArrayList<Expresion> listaExpresion2) {
         this.listaExpresion = listaExpresion;
@@ -32,29 +32,29 @@ public class If_statement extends Expresion {
 
     @Override
     public Object ejecutar() {
-        Object r="";
-        Object aux=null;
-        while (!condicion.basico()) {
-            condicion.ejecutar();
-            condicion = (Valor) condicion.getValor();
+        Object r = "";
+        Object aux = null;
+        if (condicion instanceof Valor) {
+            valor = new Valor(condicion.getValor());
         }
-        if (condicion.getBoolean()) {
+
+        if (((Valor)valor).getBoolean()) {
             for (Expresion e : this.listaExpresion) {
-                aux=e.ejecutar();
-                r+=aux==null||aux==""?"":aux+"\n";
+                aux = e.ejecutar();
+                r += aux == null || aux == "" ? "" : aux + "\n";
 
             }
         } else {
             if (ifelsif == null) {
                 if (this.listaExpresion2 != null) {
                     for (Expresion e : this.listaExpresion2) {
-                        aux=e.ejecutar();
-                        r+=aux==null||aux==""?"":aux+"\n";
+                        aux = e.ejecutar();
+                        r += aux == null || aux == "" ? "" : aux + "\n";
                     }
                 }
-            }else{
-                aux=this.ifelsif.ejecutar();
-                r+=aux==null||aux==""?"":aux+"\n";
+            } else {
+                aux = this.ifelsif.ejecutar();
+                r += aux == null || aux == "" ? "" : aux + "\n";
             }
         }
         return r;
