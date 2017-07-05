@@ -1,15 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package analizadores;
 
-/**
- *
- * @author ordenador
- */
-public class Operacion<Tipo> extends Valor {
+public class Operacion extends Valor {
 
     protected String operacion;
     protected Valor valor1;
@@ -20,56 +11,55 @@ public class Operacion<Tipo> extends Valor {
         this.operacion = operacion;
         this.valor1 = valor1;
         this.valor2 = valor2;
-
     }
 
     @Override
     public Object ejecutar() {
         switch (this.operacion) {
             case "+":
-                this.valor = (Valor) sum(valor1, valor2);
+                this.valor = sum(valor1, valor2);
                 break;
             case "-":
-                this.valor = (Valor) sub(valor1, valor2);
+                this.valor = sub(valor1, valor2);
                 break;
             case "x":
-                this.valor = (Valor) mul(valor1, valor2);
+                this.valor = mul(valor1, valor2);
                 break;
             case "/":
-                this.valor = (Valor) div(valor1, valor2);
+                this.valor = div(valor1, valor2);
                 break;
             case "%":
-                this.valor = (Valor) mod(valor1, valor2);
+                this.valor = mod(valor1, valor2);
                 break;
             case "**":
-                this.valor = (Valor) exp(valor1, valor2);
+                this.valor = exp(valor1, valor2);
                 break;
             case "<":
-                this.valor = (Valor) less(valor1, valor2);
+                this.valor = less(valor1, valor2);
                 break;
             case ">":
-                this.valor = (Valor) greater(valor1, valor2);
+                this.valor = greater(valor1, valor2);
                 break;
             case "<=":
-                this.valor = (Valor) less_equal(valor1, valor2);
+                this.valor = less_equal(valor1, valor2);
                 break;
             case ">=":
-                this.valor = (Valor) greater_equal(valor1, valor2);
+                this.valor = greater_equal(valor1, valor2);
                 break;
             case "=":
-                this.valor = (Valor) equal(valor1, valor2);
+                this.valor = equal(valor1, valor2);
                 break;
             case "!":
-                this.valor = (Valor) not(valor1);
+                this.valor = not(valor1);
                 break;
             case "!=":
-                this.valor = (Valor) not_equal(valor1, valor2);
+                this.valor = not_equal(valor1, valor2);
                 break;
             case "||":
-                this.valor = (Valor) or(valor1, valor2);
+                this.valor = or(valor1, valor2);
                 break;
             case "&&":
-                this.valor = (Valor) and(valor1, valor2);
+                this.valor = and(valor1, valor2);
                 break;
         }
         return this.valor;
@@ -80,417 +70,360 @@ public class Operacion<Tipo> extends Valor {
     }
 
     private Valor not(Valor valor1) {
-        Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
-        }
-        return new Valor(new Valor(r).getBoolean());
+        valor1.getValor();
+        System.out.println("no: "+getBoolean(valor1));
+        return new Valor(!getBoolean(valor1));
     }
 
     private Valor and(Valor valor1, Valor valor2) {
-        Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
-        }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
-        }
-        if (valor1.getValor() instanceof Boolean && valor2.getValor() instanceof Boolean) {
-            r = (Boolean)valor1.getValor()&&(Boolean)valor2.getValor();
-        }
-        return new Valor(r);
+        valor1.getValor();
+        valor2.getValor();
+        return new Valor(getBoolean(valor1) && getBoolean(valor2));
     }
+
     private Valor or(Valor valor1, Valor valor2) {
-        Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
-        }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
-        }
-        if (valor1.getValor() instanceof Boolean && valor2.getValor() instanceof Boolean) {
-            r = (Boolean)valor1.getValor()||(Boolean)valor2.getValor();
-        }
-        return new Valor(r);
+        valor1.getValor();
+        valor2.getValor();
+        return new Valor(getBoolean(valor1) || getBoolean(valor2));
     }
 
     private Valor equal(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.doubleValue() == b.doubleValue();
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = b.intValue() == a.doubleValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.intValue() == b.doubleValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a.intValue() == b.intValue();
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double && v2 instanceof Double) {
+                r = ((Double) v1) == ((Double) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = ((Integer) v1).doubleValue() == ((Double) v2);
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = ((Double) v1) == ((Integer) v2).doubleValue();
+
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) == ((Integer) v2);
             }
+        } else {
+            //no se comparan string
         }
         return new Valor(r);
     }
 
     private Valor greater_equal(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.doubleValue() >= b.doubleValue();
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a.doubleValue() >= b.intValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.intValue() >= b.doubleValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a.intValue() >= b.intValue();
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double && v2 instanceof Double) {
+                r = ((Double) v1) >= ((Double) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = ((Integer) v1).doubleValue() >= ((Double) v2);
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = ((Double) v1) >= ((Integer) v2).doubleValue();
+
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) >= ((Integer) v2);
             }
+        } else {
+            //no se comparan string
         }
         return new Valor(r);
     }
 
     private Valor less_equal(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.doubleValue() <= b.doubleValue();
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a.doubleValue() <= b.intValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.intValue() <= b.doubleValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a.intValue() <= b.intValue();
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double && v2 instanceof Double) {
+                r = ((Double) v1) <= ((Double) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = ((Integer) v1).doubleValue() <= ((Double) v2);
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = ((Double) v1).doubleValue() <= ((Integer) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) <= ((Integer) v2);
             }
+        } else {
+            //no se comparan string
         }
         return new Valor(r);
     }
 
     private Valor greater(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.doubleValue() > b.doubleValue();
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a.doubleValue() > b.intValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.intValue() > b.doubleValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a.intValue() > b.intValue();
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double && v2 instanceof Double) {
+                r = ((Double) v1) > ((Double) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = ((Integer) v1).doubleValue() > ((Double) v2);
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = ((Double) v1) > ((Integer) v2).doubleValue();
+
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) > ((Integer) v2);
             }
+        } else {
+            //no se comparan string
         }
         return new Valor(r);
     }
 
     private Valor less(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.doubleValue() < b.doubleValue();
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a.doubleValue() < b.intValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a.intValue() < b.doubleValue();
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a.intValue() < b.intValue();
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double && v2 instanceof Double) {
+                r = ((Double) v1) < ((Double) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = ((Integer) v1).doubleValue() < ((Double) v2);
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = ((Double) v1) < ((Integer) v2).doubleValue();
+
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) < ((Integer) v2);
             }
+        } else {
+            //no se comparan string
         }
         return new Valor(r);
     }
 
     private Valor exp(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = Math.pow(a, b);
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = Math.pow(a, b.intValue() + 0.0);
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = Math.pow(a, b);
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = Math.pow(a, b);
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double && v2 instanceof Double) {
+                r = Math.pow(((Double) v1), ((Double) v2));
+
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = Math.pow(((Integer) v1).doubleValue(), ((Double) v2));
+
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = Math.pow(((Double) v2), ((Integer) v1).doubleValue());
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = Math.pow(((Integer) v1).doubleValue(), ((Integer) v2).doubleValue());
             }
+        } else {
+            //error exponente solo con numeros
         }
         return new Valor(r);
     }
 
     private Valor mod(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double || valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a % b;
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a % b;
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a % b;
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a % b;
+        if (!(v1 instanceof String || v2 instanceof String)) {
+
+            if (v1 instanceof Double || v2 instanceof Double) {
+                r = ((Double) v1) % ((Double) v2);
+
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) % ((Integer) v2);
             }
+        } else {
+            //error semantico no se pueden dividir string
         }
         return new Valor(r);
     }
 
     private Valor div(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String) && !(valor2.getValor() instanceof String)) {
-            if (valor1.getValor() instanceof Double || valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a / b;
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a / b;
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a / b;
+        if (!(v1 instanceof String) && !(v2 instanceof String)) {
+            if (v1 instanceof Double || v2 instanceof Double) {
+                r = ((Double) v1) / ((Double) v2);
             } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a / b;
+                r = ((Integer) v1) / ((Integer) v2);
             }
+        } else {
+            //error semantico no se pueden dividir string
         }
         return new Valor(r);
     }
 
     private Valor sub(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-        if (!(valor1.getValor() instanceof String || valor2.getValor() instanceof String)) {
+        if (!(v1 instanceof String || v2 instanceof String)) {
 
-            if (valor1.getValor() instanceof Double || valor2.getValor() instanceof Double) {
-                Double a = new Double((double) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a - b;
-            } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-                Double a = new Double((Double) valor1.getValor() + 0.0);
-                Integer b = new Integer((Integer) valor2.getValor());
-                r = a - b;
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-                Integer a = new Integer((Integer) valor1.getValor());
-                Double b = new Double((double) valor2.getValor());
-                r = a - b;
-            } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-                Integer a = new Integer((int) valor1.getValor());
-                Integer b = new Integer((int) valor2.getValor());
-                r = a - b;
+            if (v1 instanceof Double || v2 instanceof Double) {
+                r = ((Double) v1) - ((Double) v2);
+            } else if (v1 instanceof Double && v2 instanceof Integer) {
+                r = ((Double) v1) - ((Integer) v2);
+            } else if (v1 instanceof Integer && v2 instanceof Double) {
+                r = ((Integer) v1) - ((Double) v2);
+            } else if (v1 instanceof Integer && v2 instanceof Integer) {
+                r = ((Integer) v1) - ((Integer) v2);
             }
+        } else {
+            //error semantico no se pueden restar string
         }
         return new Valor(r);
     }
 
     private Valor mul(Valor valor1, Valor valor2) {
         Object r = null;
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
+        }
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
+        }
+        if (v1 instanceof String && v2 instanceof Integer) {
+            String aux = "";
+            for (int i = 0; i++ < (Integer) v2; aux += (String) v1);
+            r = aux;
+        } else if (v1 instanceof Integer && v2 instanceof String) {
+            String aux = "";
+            for (int i = 0; i++ < (Integer) v1; aux += (String) v2);
+            r = aux;
+        } else if (v1 instanceof Double && v2 instanceof Double) {
+            r = ((Double) v1) * ((Double) v2);
+        } else if (v1 instanceof Double && v2 instanceof Integer) {
+            r = ((Double) v1) * ((Integer) v2);
+        } else if (v1 instanceof Integer && v2 instanceof Double) {
+            r = ((Integer) v1) * ((Double) v2);
+        } else if (v1 instanceof Integer && v2 instanceof Integer) {
+            r = ((Integer) v1) * ((Integer) v2);
 
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
-        }
-
-        if (valor1.getValor() instanceof String && valor2.getValor() instanceof Integer) {
-            String aux = "";
-            for (int i = 0; i++ < (Integer) valor2.getValor(); aux += (String) valor1.getValor());
-            r = aux;
-        } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof String) {
-            String aux = "";
-            for (int i = 0; i++ < (Integer) valor1.getValor(); aux += (String) valor2.getValor());
-            r = aux;
-        } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-            Double a = new Double((Double) valor1.getValor() + 0.0);
-            Double b = new Double((Double) valor2.getValor() + 0.0);
-            r = a * b;
-        } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-            Double a = new Double((Double) valor1.getValor() + 0.0);
-            Integer b = new Integer((Integer) valor2.getValor());
-            r = a * b;
-        } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-            Integer a = new Integer((Integer) valor1.getValor());
-            Double b = new Double((double) valor2.getValor());
-            r = a * b;
-        } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-            Integer a = new Integer((int) valor1.getValor());
-            Integer b = new Integer((int) valor2.getValor());
-            r = a * b;
-        }
-        this.valor = new Valor(r);
         return new Valor(r);
     }
 
     private Valor sum(Valor valor1, Valor valor2) {
         Object r = null;
-
-        while (!basico(valor1)) {
-            valor1.ejecutar();
-            valor1 = (Valor) valor1.getValor();
-
+        Object v1 = valor1.getValor();
+        Object v2 = valor2.getValor();
+        if (v1 instanceof Valor) {
+            v1 = ((Valor) v1).getValor();
         }
-        while (!basico(valor2)) {
-            valor2.ejecutar();
-            valor2 = (Valor) valor2.getValor();
+        if (v2 instanceof Valor) {
+            v2 = ((Valor) v2).getValor();
         }
-
-        if (valor1.getValor() instanceof String || valor2.getValor() instanceof String) {
-
-            r = (valor1.getValor() + "") + (valor2.getValor() + "");
-        } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Double) {
-            Double a = new Double((Double) valor1.getValor() + 0.0);
-            Double b = new Double((Double) valor2.getValor() + 0.0);
-            r = a + b;
-
-        } else if (valor1.getValor() instanceof Double && valor2.getValor() instanceof Integer) {
-            Double a = new Double((Double) valor1.getValor() + 0.0);
-            Integer b = new Integer((Integer) valor2.getValor());
-            r = a + b;
-
-        } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Double) {
-            Integer a = new Integer((Integer) valor1.getValor());
-            Double b = new Double((double) valor2.getValor());
-            r = a + b;
-
-        } else if (valor1.getValor() instanceof Integer && valor2.getValor() instanceof Integer) {
-            Integer a = new Integer((int) valor1.getValor());
-            Integer b = new Integer((int) valor2.getValor());
-            r = a + b;
+        if (v1 instanceof String && v2 instanceof String) {
+            r = ((String) v1) + ((String) v2);
+        } else if (v1 instanceof String && v2 instanceof Integer) {
+            r = ((String) v1) + ((Integer) v2);
+        } else if (v1 instanceof Integer && v2 instanceof String) {
+            r = ((Integer) v1) + ((String) v2);
+        } else if (v1 instanceof Double && v2 instanceof Double) {
+            r = ((Double) v1) + ((Double) v2);
+        } else if (v1 instanceof Double && v2 instanceof Integer) {
+            r = ((Double) v1) + ((Integer) v2);
+        } else if (v1 instanceof Integer && v2 instanceof Double) {
+            r = ((Integer) v1) + ((Double) v2);
+        } else if (v1 instanceof Integer && v2 instanceof Integer) {
+            r = ((Integer) v1) + ((Integer) v2);
         }
         return new Valor(r);
     }
 
-    private boolean basico(Valor valor1) {
-        return valor1.getValor() instanceof Integer || valor1.getValor() instanceof Double
-                || valor1.getValor() instanceof String || valor1.getValor() instanceof Boolean;//null
+    private Boolean getBoolean(Object v) {
+        Boolean r = false;
+        if (v instanceof Valor) {
+            v=((Valor)v).getValor();
+        }
+        if (v instanceof Boolean) {
+            r = (Boolean) v;
+        } else if (v instanceof Integer) {
+            r = ((Integer) v) >= 1;
+        } else if (v == null) {
+            r = false;
+        } else if (v instanceof String) {
+            try {
+                Double s;
+                s = new Double((String) v);
+                r = s >= 1;
+
+            } catch (NumberFormatException e1) {
+                try {
+                    Integer i;
+                    i = new Integer((String) v);
+                    r = i >= 1;
+                } catch (NumberFormatException e2) {
+                    boolean a = ((String) v).equals("true");
+                    r = a;
+                }
+            }
+        }
+        return r;
+    }
+
+    @Override
+    public Object getValor() {
+        if(this.valor==null){
+            this.ejecutar();
+        }
+        return this.valor;
     }
 
 }

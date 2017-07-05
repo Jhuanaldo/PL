@@ -11,25 +11,20 @@ import java.util.ArrayList;
  *
  * @author ordenador
  */
-public class Unless_statement extends Expresion {
+public class Unless_statement extends If_statement {
 
-    private ArrayList<Expresion> listaExpresion;
-    private Valor condicion;
-
-    public Unless_statement(Valor condicion,ArrayList<Expresion> listaExpresion) {
-        this.condicion = condicion;
-        this.listaExpresion = listaExpresion;
+    public Unless_statement(Valor condicion, ArrayList<Expresion> listaExpresion) {
+        super(condicion, listaExpresion, null, null);
     }
-
-    @Override
+    
+        @Override
     public Object ejecutar() {
         Object r = "";
         Object aux = null;
-        while (!condicion.basico()) {
-            condicion.ejecutar();
-            condicion = (Valor) condicion.getValor();
+        if (condicion instanceof Valor) {
+            valor = new Valor(condicion.getValor());
         }
-        if (!condicion.getBoolean()) {
+        if (!((Valor)valor).getBoolean()) {
             for (Expresion e : this.listaExpresion) {
                 aux = e.ejecutar();
                 r += aux == null || aux == "" ? "" : aux + "\n";
@@ -38,5 +33,7 @@ public class Unless_statement extends Expresion {
         } 
         return r;
     }
+
+
 
 }

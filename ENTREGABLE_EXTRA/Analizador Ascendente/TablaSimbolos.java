@@ -15,6 +15,7 @@ public class TablaSimbolos {
     }
     
     public static TablaSimbolos getTablaSimbolos(){
+        //singleton
         if(tablaSimbolos==null){
             tablaSimbolos=new TablaSimbolos();
         }
@@ -25,16 +26,19 @@ public class TablaSimbolos {
         tabla.put(nombre, valor);
     }
     
-    public Hashtable getTabla(){
+    private Hashtable getTabla(){
         return this.tabla;
     }
+    
+    public boolean existe(String n){
+        return this.getTabla().get(n)!=null;
+    }
 
-
-    public void put(String s,Valor v) {
+    public void put(String s,Expresion v) {
         this.getTabla().put(s, v);
     }
-    public Valor get(String nombre) {
-        return (Valor) this.getTabla().get(nombre);
+    public Expresion get(String nombre) {
+        return  (Expresion) this.getTabla().get(nombre);
     }
 
 }

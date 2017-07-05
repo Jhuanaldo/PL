@@ -10,16 +10,26 @@ package analizadores;
  * @author ordenador
  */
 public class Expresion {
-    
+
+    protected Object valor;
 
     public Expresion() {
     }
-    
-    public Object ejecutar(){
-        return null;
+
+    public Object ejecutar() {
+        Object r = null;
+        if (valor != null) {
+            r = valor;
+        }
+        return r;
     }
-    
-    
-    
-    
+
+    public Object getValor() {
+        return valor;
+    }
+
+    public void setValor(Object valor) {
+        this.valor = valor;
+    }
+
 }

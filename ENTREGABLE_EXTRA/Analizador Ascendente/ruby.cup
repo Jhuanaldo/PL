@@ -87,8 +87,8 @@ prog ::= expression_list:el {:
                 System.out.println(o);
             }
         }
-    }
- :}
+    } 
+:}
 ;
 
 expression_list ::= expression:e terminator {: 
@@ -109,11 +109,30 @@ expression ::=  function_definition
 | if_statement:f {: RESULT=f; :}
 | unless_statement:u {: RESULT=u; :} 
 | while_statement:w    {: RESULT=w; :}
-| do_statement:v       {: :}
+| do_statement:v       {:  :}
 | case_statement:v     {: :}
 | class_block
 | return_statement:v  {:  :}
 ;
+
+unless_statement ::= UNLESS rvalue:c CRLF expression_list:l1 END {: RESULT=new Unless_statement(c,l1);  :}
+;
+
+
+
+
+if_statement ::=  IF rvalue:c CRLF expression_list:l1 END {: RESULT=new If_statement(c,l1,null); :}
+| IF rvalue:c THEN expression_list:l1 END  {: RESULT=new If_statement(c,l1,null); :}
+| IF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 END {: RESULT=new If_statement(c,l1,l2); :}
+| IF rvalue:c THEN expression_list:l1 ELSE expression_list:l2 END  {: RESULT=new If_statement(c,l1,l2); :}
+| IF rvalue:c CRLF expression_list:l1 if_elsif_statement:els END {: RESULT=new If_statement(c,l1,null,els); :}
+;
+
+if_elsif_statement ::= ELSIF rvalue:c CRLF expression_list:l1 {: RESULT=new If_statement(c,l1,null); :}
+| ELSIF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 {: RESULT=new If_statement(c,l1,l2); :}
+| ELSIF rvalue:c CRLF expression_list:l1 if_elsif_statement:els {: RESULT=new If_statement(c,l1,null,els); :}
+;
+
 
 while_statement ::=  WHILE rvalue:c CRLF while_expression_list:l END {: RESULT=new While_statement(c,l); :}
 ;
@@ -129,23 +148,6 @@ while_expression_list ::=  expression:e terminator {: ArrayList<Expresion> l=new
 
 
 
-
-unless_statement ::= UNLESS rvalue:c CRLF expression_list:l1 END {: RESULT=new Unless_statement(c,l1);  :}
-;
-
-
-
-if_statement ::=  IF rvalue:c CRLF expression_list:l1 END {: RESULT=new If_statement(c,l1,null); :}
-| IF rvalue:c THEN expression_list:l1 END  {: RESULT=new If_statement(c,l1,null); :}
-| IF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 END {: RESULT=new If_statement(c,l1,l2); :}
-| IF rvalue:c THEN expression_list:l1 ELSE expression_list:l2 END  {: RESULT=new If_statement(c,l1,l2); :}
-| IF rvalue:c CRLF expression_list:l1 if_elsif_statement:els END {: RESULT=new If_statement(c,l1,null,els); :}
-;
-
-if_elsif_statement ::= ELSIF rvalue:c CRLF expression_list:l1 {: RESULT=new If_statement(c,l1,null); :}
-| ELSIF rvalue:c CRLF expression_list:l1 ELSE CRLF expression_list:l2 {: RESULT=new If_statement(c,l1,l2); :}
-| ELSIF rvalue:c CRLF expression_list:l1 if_elsif_statement:els {: RESULT=new If_statement(c,l1,null,els); :}
-;
 
 terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF
 ;
@@ -289,22 +291,28 @@ float_result ::= float_result:f MUL float_result:f2 {: RESULT=f*f2; :}
 ;
 
 assignment ::= lvalue:s PLUS_ASSIGN rvalue:e {: 
+    Operacion o=new Operacion(new Lvalue(s),"+",e);
+    RESULT=new Assignment(s,o);
 :}  
 | lvalue:s  MINUS_ASSIGN rvalue:e {: 
+    Operacion o=new Operacion(new Lvalue(s),"-",e);
+    RESULT=new Assignment(s,o);
 :}  
 | lvalue:s  MUL_ASSIGN rvalue:e {: 
+    Operacion o=new Operacion(new Lvalue(s),"*",e);
+    RESULT=new Assignment(s,o);
 :}  
 | lvalue:s  DIV_ASSIGN rvalue:e {: 
-
-
+    Operacion o=new Operacion(new Lvalue(s),"/",e);
+    RESULT=new Assignment(s,o);
 :}  
 | lvalue:s MOD_ASSIGN rvalue:e  {: 
-
-
+    Operacion o=new Operacion(new Lvalue(s),"%",e);
+    RESULT=new Assignment(s,o);
  :}  
 | lvalue:s EXP_ASSIGN rvalue:e  {: 
-
-
+    Operacion o=new Operacion(new Lvalue(s),"**",e);
+    RESULT=new Assignment(s,o);
  :}  
 | lvalue:s ASSIGN rvalue:v      {:  
     RESULT=new Assignment(s,v);
@@ -324,3 +332,6 @@ case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
 
 do_statement ::= lvalue:c DO ID_ITER expression_list:l END {:  :}
 ;
+
+
+
