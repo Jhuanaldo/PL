@@ -18,7 +18,7 @@ exec: clean
 	# export CLASSPATH=$CLASSPATH:/usr/share/java/cup.jar:/usr/share/java/JLlex.jar
 	jflex Lex.flex
 	cup ruby.cup
-	javac *.java -Xdiags:verbose
+	javac *.java
 
 m1:
 	java parser ejemplos/programaEjemplo.rb
@@ -34,6 +34,6 @@ m5:
 clean:
 	rm -f Yylex.java *~
 	rm -f parser.java
-	rm -f Sym.java
+	rm -f sym.java
 	rm -f *.class
 	rm -f *~

@@ -2,11 +2,13 @@ def decir_adios
 	if true
 		"3"
 	else
-		"asasashol"
+		"asaiaoshfol"
 	end
 	hola.quetal?
 
 	hola.quetal!
+
+	a=[1,2,3]
 
 
 	$hola
@@ -32,8 +34,10 @@ def decir_adios
 		end
 	end
 	while 4<0
-		puts "hola";
+		a=1
 	end
+	puts "hola que tal soy un put"
+	metodo(2,3)
 	case @s
 	when 1
 		4

@@ -17,6 +17,7 @@ expression : function_definition
 | do_statement
 | case_statement
 | class_block
+| array_assignment
 ;
 
 if_statement : IF rvalue CRLF expression_list END
