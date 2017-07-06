@@ -1,4 +1,4 @@
-
+package analizadores;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -42,3 +42,4 @@ public class TablaSimbolos {
     }
 
 }
+ 

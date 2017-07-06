@@ -1,22 +1,20 @@
+/*
+    
+
+*/
+
+
+
+
+
+package analizadores;
 
 import java_cup.runtime.*;
 import java.io.*;
 import java.util.ArrayList;
 
 parser code {:
-    public static void main(String args[]) throws Exception {
-        FileInputStream fichero=new FileInputStream(args[0]);
-        DataInputStream entrada =new DataInputStream(fichero);
-        try{
-            new parser(new Yylex(new BufferedReader(new InputStreamReader(entrada)))).parse();
-        }
-        catch ( Exception e) {
-            e.printStackTrace();
-            System.out.println(" Análisis INCORRECTO !! :_(");
-                System.exit(1);
-            }
-            System.out.println("Análisis Correcto!!!<3");
-        }
+	
 :}
 
 action code {: 
@@ -38,15 +36,15 @@ terminal String LITERAL;
 non terminal prog,
 terminator,
 single_object,
-function_definition,
 class_block,
-function_definition_header,
 array_assignment,
 array_definition,
 array_definition_elements,
 when_statement;
 
 
+non terminal Function_definition function_definition;
+non terminal Function_definition function_definition_header;
 non terminal ArrayList<String> function_definition_params;
 non terminal ArrayList<String> function_call;
 non terminal ArrayList<String> function_definition_params_list;
@@ -115,7 +113,7 @@ expression_list ::= expression:e terminator {:
 | terminator
 ;
 
-expression ::=  function_definition
+expression ::=  function_definition:f {: RESULT=f; :}
 | rvalue:v {: RESULT=v; :}
 | if_statement:f {: RESULT=f; :}
 | unless_statement:u {: RESULT=u; :} 
@@ -162,11 +160,24 @@ while_expression_list ::=  expression:e terminator {: ArrayList<Expresion> l=new
 
 terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF
 ;
-
-function_definition ::=  function_definition_header expression_list END
+function_definition ::=  function_definition_header:fdh expression_list:el END {: 
+                                    fdh.setListaExpresion(el);
+                                    RESULT=fdh; :}
 ;
 
-function_definition_header ::=  DEF ID_FUNCTION function_definition_params CRLF | DEF lvalue CRLF
+function_definition_header ::=  DEF ID:id function_definition_params:fdp CRLF {:
+    ArrayList<Lvalue> lvalues=new ArrayList();
+    for(String s:fdp){
+        lvalues.add(new Lvalue(s));
+    }
+    RESULT=new Function_definition(null,lvalues,id);
+:}
+
+
+ | DEF lvalue:id CRLF {: 
+                        RESULT=new Function_definition(null,null,id);
+
+  :}
 ;
 
 function_definition_params ::=  LEFT_RBRACKET RIGHT_RBRACKET {: RESULT=new ArrayList<String>();  :}
@@ -191,7 +202,24 @@ rvalue ::= array_assignment
 | bool_t:s {: RESULT=new Valor(s); :} 
 | assignment:a {: RESULT= a; :}
 | lvalue:s {: RESULT= new Lvalue(s); :}
-| lvalue:l function_call:fc {:     :}      //////////////
+| lvalue:l function_call:fc {: 
+    ArrayList<Lvalue> lvalues=new ArrayList();
+    for(String s:fc){
+        lvalues.add(new Lvalue(s));
+    }
+    RESULT=new Function_call(l,lvalues);
+
+
+
+
+
+
+ :}      //////////////
+
+
+
+
+
 | BIT_NOT rvalue
 | rvalue:a PLUS rvalue:b  {: Operacion o=new Operacion(a,"+",b); RESULT=o; :}
 | rvalue:a MINUS rvalue:b  {: Operacion o=new Operacion(a,"-",b); RESULT=o; :}
@@ -328,11 +356,11 @@ assignment ::= lvalue:s PLUS_ASSIGN rvalue:e {:
 | lvalue:s ASSIGN rvalue:v      {:  
     RESULT=new Assignment(s,v);
  :}  
-;
+;                                                               
 
-function_call ::= LEFT_SBRACKET function_definition_params:f RIGHT_SBRACKET {:  :}
-| function_definition_params:f {:  :}
-| LEFT_SBRACKET RIGHT_SBRACKET
+function_call ::= LEFT_RBRACKET function_definition_params:f RIGHT_RBRACKET {: RESULT=f;   :}
+| function_definition_params:f {: RESULT=f; :}
+| LEFT_SBRACKET RIGHT_SBRACKET {: RESULT=new ArrayList<String>(); :}
 ;
 
 bool_t ::= TRUE {: RESULT=new Boolean(true); :} | FALSE {: RESULT=new Boolean(false); :}

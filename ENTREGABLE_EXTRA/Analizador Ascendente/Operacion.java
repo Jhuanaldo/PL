@@ -1,4 +1,4 @@
-
+package analizadores;
 
 public class Operacion extends Valor {
 
@@ -83,7 +83,7 @@ public class Operacion extends Valor {
     private Valor or(Valor valor1, Valor valor2) {
         valor1.getValor();
         valor2.getValor();
-        return new Valor(getBoolean(valor1) || getBoolean(valor2));
+        return new Valor(((Valor)valor1).getBoolean() || ((Valor)valor2).getBoolean());
     }
 
     private Valor equal(Valor valor1, Valor valor2) {
