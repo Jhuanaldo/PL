@@ -1,0 +1,10 @@
+b="puto"
+c=5
+def a
+    while(c)
+        b
+        c-=1
+    end
+end
+a
+c

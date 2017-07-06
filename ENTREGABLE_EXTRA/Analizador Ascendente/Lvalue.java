@@ -1,4 +1,4 @@
-
+package analizadores;
 
 /**
  *
@@ -12,6 +12,10 @@ public class Lvalue  extends Valor {
         super(null);
         this.id=id;
     }
+
+    public String getId() {
+        return id;
+    }
     
     @Override
     public Object ejecutar(){
@@ -20,10 +24,9 @@ public class Lvalue  extends Valor {
     
     @Override
     public Object getValor(){
-
         Expresion e=TablaSimbolos.getTablaSimbolos().get(id);
         valor =e;
-        if(e.getClass().getName()=="analizadores.Expresion"){
+        if(!(e instanceof Valor)){
             e.ejecutar();
         }
         return  e.getValor();
@@ -36,6 +39,7 @@ public class Lvalue  extends Valor {
         }
         return e;
     }
+    
     
     
     
