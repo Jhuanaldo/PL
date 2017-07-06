@@ -24,6 +24,7 @@ public class While_statement extends Expresion {
             valor = new Valor(condicion.getValor());
         }
         boolean b=((Valor)valor).getBoolean();
+        TablaSimbolos.getTablaSimbolos().push();
         while (b) {
             for (Expresion e : this.listaExpresion) {
                 aux = e.ejecutar();
@@ -37,6 +38,7 @@ public class While_statement extends Expresion {
             b=((Valor)valor).getBoolean();
 
         }
+        TablaSimbolos.getTablaSimbolos().pop();
         return r;
     }
 

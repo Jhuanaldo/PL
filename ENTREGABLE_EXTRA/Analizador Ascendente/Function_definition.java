@@ -26,6 +26,7 @@ public class Function_definition extends Expresion {
         @Override
         public Object ejecutar() {
             String r="";
+            TablaSimbolos.getTablaSimbolos().push();
             for (Expresion e : this.expresiones) {
                 if (e != null) {
                     Object o = e.ejecutar();
@@ -34,6 +35,7 @@ public class Function_definition extends Expresion {
                     }
                 }
             }
+            TablaSimbolos.getTablaSimbolos().pop();
             this.valor=r;
             return r;
         }

@@ -208,18 +208,7 @@ rvalue ::= array_assignment
         lvalues.add(new Lvalue(s));
     }
     RESULT=new Function_call(l,lvalues);
-
-
-
-
-
-
- :}      //////////////
-
-
-
-
-
+ :}     
 | BIT_NOT rvalue
 | rvalue:a PLUS rvalue:b  {: Operacion o=new Operacion(a,"+",b); RESULT=o; :}
 | rvalue:a MINUS rvalue:b  {: Operacion o=new Operacion(a,"-",b); RESULT=o; :}
@@ -286,11 +275,7 @@ array_definition_elements ::= lvalue COMMA array_definition_elements
 | lvalue
 ;
 
-when_statement ::= WHEN array_definition_elements CRLF expression_list
-| WHEN array_definition_elements CRLF expression_list when_statement
-| WHEN array_definition_elements CRLF
-| ELSE CRLF expression CRLF
-;
+
 
 int_result ::= int_result:a MUL int_result:b {: RESULT=a*b; :}
 | int_result:a DIV int_result:b  {: RESULT=a/b; :}
@@ -367,6 +352,12 @@ bool_t ::= TRUE {: RESULT=new Boolean(true); :} | FALSE {: RESULT=new Boolean(fa
 ;
 
 case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
+;
+
+when_statement ::= WHEN array_definition_elements CRLF expression_list
+| WHEN array_definition_elements CRLF expression_list when_statement
+| WHEN array_definition_elements CRLF
+| ELSE CRLF expression CRLF
 ;
 
 do_statement ::= lvalue:c DO ID_ITER expression_list:l END {:  :}

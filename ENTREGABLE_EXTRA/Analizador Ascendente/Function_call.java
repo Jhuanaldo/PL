@@ -23,12 +23,12 @@ public class Function_call extends Valor{
         super(null);
         this.argumentos=fc;
         this.id=new Lvalue(nombre);
-        
     }
     
     @Override
     public Object ejecutar(){
         Assignment a;
+        
         for(Lvalue l:argumentos){
             a=new Assignment(l.getId(),l);
             a.ejecutar();

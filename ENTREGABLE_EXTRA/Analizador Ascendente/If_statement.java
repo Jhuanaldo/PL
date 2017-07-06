@@ -38,6 +38,7 @@ public class If_statement extends Expresion {
             valor = new Valor(condicion.getValor());
         }
 
+        TablaSimbolos.getTablaSimbolos().push();
         if (((Valor)valor).getBoolean()) {
             for (Expresion e : this.listaExpresion) {
                 aux = e.ejecutar();
@@ -57,6 +58,7 @@ public class If_statement extends Expresion {
                 r += aux == null || aux == "" ? "" : aux + "\n";
             }
         }
+        TablaSimbolos.getTablaSimbolos().pop();
         return r;
     }
 
