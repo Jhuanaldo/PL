@@ -1,18 +1,3 @@
-//////////////////////////////////////////////////
-//												//
-//												//
-//												//
-//			cosas importantes:					//
-//				ID ESTÁ ROTO					//
-//				LITERAL ESTÁ ROTO				//
-//												//
-//												//
-//												//
-//												//
-//												//
-//												//
-//////////////////////////////////////////////////
-
 import java_cup.runtime.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -34,9 +19,9 @@ parser code {:
 :}
 
 
-terminal ID, ID_GLOBAL, ID_FUNCTION,ID_ITER;
+terminal ID, ID_GLOBAL, ID_FUNCTION;
 terminal Double FLOAT;
-terminal COMMA, DOT, SEMICOLON, CRLF,DO;
+terminal COMMA, DOT, SEMICOLON, CRLF;
 terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
 terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
 
@@ -64,7 +49,6 @@ when_statement;
 
 non terminal String lvalue;
 non terminal Case case_statement;
-non terminal Do do_statement;
 non terminal While while_statement;
 non terminal ListaExpresion while_expression_list;
 non terminal Ifstatement if_statement;
@@ -110,7 +94,6 @@ expression ::=  function_definition
 | rvalue:v {: RESULT=Expresion.getExpresion(v); :}
 | return_statement:v {: RESULT=Expresion.getExpresion(v); :}
 | while_statement:v    {: RESULT=v; :}
-| do_statement:v       {: RESULT=v; :}
 | case_statement:v     {: RESULT=v; :}
 | class_block
 ;
@@ -140,9 +123,6 @@ function_definition_params ::=  LEFT_RBRACKET RIGHT_RBRACKET
 | LEFT_RBRACKET function_definition_params_list:e1 RIGHT_RBRACKET {: System.out.println(e1+" function_definition_params 1"); :}
 | function_definition_params_list:e1 {: System.out.println(e1+" function_definition_params 2"); :}
 ;
-
-// function_definition_body ::=  expression_list // MIRAR ಠ_ಠ ಠ_ಠ
-// ;
 
 function_definition_params_list ::=  lvalue
 | function_definition_params_list COMMA lvalue
@@ -294,10 +274,4 @@ bool_t ::= TRUE | FALSE
 ;
 
 case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
-;
-
-//do_statement ::= lvalue:c DO ID_ITER expression_list:l END {: RESULT=new Do(c,l); :}
-//;   Cambiar por este cuando este hecho lvalue
-
-do_statement ::= rvalue:c DO ID_ITER expression_list:l END {: RESULT = new Do(c,l); :}
 ;
