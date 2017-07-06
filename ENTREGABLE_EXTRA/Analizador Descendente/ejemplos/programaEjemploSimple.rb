@@ -36,8 +36,7 @@ def decir_adios
 	while 4<0
 		a=1
 	end
-	puts "hola que tal soy un put"
-	metodo(2,3)
+	metodo(1,"hola")
 	case @s
 	when 1
 		4

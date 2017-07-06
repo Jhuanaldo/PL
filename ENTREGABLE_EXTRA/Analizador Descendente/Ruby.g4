@@ -14,7 +14,6 @@ expression : function_definition
 | rvalue
 | return_statement
 | while_statement
-| do_statement
 | case_statement
 | class_block
 | array_assignment
@@ -47,6 +46,8 @@ function_definition_params : LEFT_RBRACKET RIGHT_RBRACKET
 ;
 
 function_definition_params_list : lvalue
+| single_object
+| function_definition_params_list COMMA single_object
 | function_definition_params_list COMMA lvalue
 ;
 
@@ -183,9 +184,6 @@ bool_t : TRUE | FALSE
 ;
 
 case_statement : CASE lvalue CRLF when_statement END
-;
-
-do_statement : rvalue DO ID_ITER expression_list END
 ;
 
 

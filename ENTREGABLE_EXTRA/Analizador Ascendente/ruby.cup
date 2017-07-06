@@ -1,30 +1,16 @@
-/*
-    
-
-*/
-
-
-
-
-
-package analizadores;
-
 import java_cup.runtime.*;
 import java.io.*;
 import java.util.ArrayList;
 
 parser code {:
-	
 :}
 
-action code {: 
+action code {:
     public static TablaSimbolos tablaSimbolos=TablaSimbolos.getTablaSimbolos();
  :}
 
-
-
 terminal Double FLOAT;
-terminal COMMA, DOT, SEMICOLON, CRLF,DO;
+terminal COMMA, DOT, SEMICOLON, CRLF;
 terminal REQUIRE, END, DEF, RETURN, IF, CASE, WHEN, THEN, ELSE, ELSIF, UNLESS, WHILE, RETRY, BREAK, TRUE, FALSE, PLUS, MINUS, MUL, DIV, MOD, EXP;
 terminal EQUAL, NOT_EQUAL, GREATER, LESS ,LESS_EQUAL ,GREATER_EQUAL, ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, MUL_ASSIGN ,DIV_ASSIGN, MOD_ASSIGN, EXP_ASSIGN, BIT_AND, BIT_OR, BIT_XOR, BIT_NOT, BIT_SHL, BIT_SHR, AND, OR, NOT, LEFT_RBRACKET, RIGHT_RBRACKET, LEFT_SBRACKET, RIGHT_SBRACKET;
 
@@ -55,15 +41,12 @@ non terminal If_statement if_elsif_statement ;
 non terminal Unless_statement unless_statement;
 non terminal ArrayList<Expresion> while_expression_list;
 non terminal While_statement while_statement;
-
-
 non terminal return_statement;
 non terminal Assignment assignment;
 non terminal Boolean bool_t;
 non terminal Valor rvalue;
 non terminal String lvalue;
-non terminal case_statement;
-non terminal do_statement;
+non terminal Case case_statement;
 non terminal Double float_result;
 non terminal String string_result;
 non terminal Integer int_result;
@@ -88,7 +71,7 @@ precedence left LEFT_RBRACKET,  RIGHT_RBRACKET, RIGHT_SBRACKET, LEFT_SBRACKET;
 
 start with prog;
 
-prog ::= expression_list:el {: 
+prog ::= expression_list:el {:
     for(Expresion e:el){
         if(e!=null){
             Object o=e.ejecutar();
@@ -96,17 +79,17 @@ prog ::= expression_list:el {:
                 System.out.println(o);
             }
         }
-    } 
+    }
 :}
 ;
 
-expression_list ::= expression:e terminator {: 
+expression_list ::= expression:e terminator {:
     ArrayList <Expresion>l=new ArrayList<Expresion>();
     l.add(e);
     RESULT=l;
     :}
 
-| expression_list:el expression:e terminator  {: 
+| expression_list:el expression:e terminator  {:
         el.add(e);
         RESULT=el;
      :}
@@ -116,9 +99,8 @@ expression_list ::= expression:e terminator {:
 expression ::=  function_definition:f {: RESULT=f; :}
 | rvalue:v {: RESULT=v; :}
 | if_statement:f {: RESULT=f; :}
-| unless_statement:u {: RESULT=u; :} 
+| unless_statement:u {: RESULT=u; :}
 | while_statement:w    {: RESULT=w; :}
-| do_statement:v       {:  :}
 | case_statement:v     {: :}
 | class_block
 | return_statement:v  {:  :}
@@ -160,11 +142,12 @@ while_expression_list ::=  expression:e terminator {: ArrayList<Expresion> l=new
 
 terminator ::= CRLF terminator | SEMICOLON terminator | SEMICOLON | CRLF
 ;
-function_definition ::=  function_definition_header:fdh expression_list:el END {: 
+function_definition ::=  function_definition_header:fdh expression_list:el END {:
                                     fdh.setListaExpresion(el);
                                     RESULT=fdh; :}
 ;
 
+<<<<<<< HEAD
 function_definition_header ::=  DEF ID:id function_definition_params:fdp CRLF {:
     ArrayList<Lvalue> lvalues=new ArrayList();
     for(String s:fdp){
@@ -196,19 +179,19 @@ class_block ::=  REQUIRE LITERAL
 
 rvalue ::= array_assignment
 | int_result:s {: RESULT=new Valor(s); :}
-| float_result:s {: RESULT=new Valor(s); :} 
+| float_result:s {: RESULT=new Valor(s); :}
 | string_result:s {: RESULT=new Valor(s); :}
 | NIL {: RESULT=new Valor(null); :}
-| bool_t:s {: RESULT=new Valor(s); :} 
+| bool_t:s {: RESULT=new Valor(s); :}
 | assignment:a {: RESULT= a; :}
 | lvalue:s {: RESULT= new Lvalue(s); :}
-| lvalue:l function_call:fc {: 
+| lvalue:l function_call:fc {:
     ArrayList<Lvalue> lvalues=new ArrayList();
     for(String s:fc){
         lvalues.add(new Lvalue(s));
     }
     RESULT=new Function_call(l,lvalues);
- :}     
+ :}
 | BIT_NOT rvalue
 | rvalue:a PLUS rvalue:b  {: Operacion o=new Operacion(a,"+",b); RESULT=o; :}
 | rvalue:a MINUS rvalue:b  {: Operacion o=new Operacion(a,"-",b); RESULT=o; :}
@@ -251,13 +234,7 @@ return_statement ::=  RETURN rvalue:v {:  :}
 
 lvalue ::= ID_GLOBAL:e1 {: RESULT=e1; :}
 | ID:e1 {: RESULT=e1; :}
-| ID:id DOT ID_FUNCTION:idf {: 
-            /*
-                Objeto o=(Objeto)tablaSimbolos.get(id);
-                Funcion f=o.getFuncion(idf);
-                f.ejecutar();
-            */
- :}
+| ID:id DOT ID_FUNCTION:idf {: :}
 | ID_FUNCTION:e1 {: RESULT=e1; :}
 ;
 
@@ -287,13 +264,13 @@ int_result ::= int_result:a MUL int_result:b {: RESULT=a*b; :}
 
 string_result ::= string_result:s MUL int_result:n
                                     {: String aux="";
-                                       for(int i=0;i++<n;aux+=s); 
+                                       for(int i=0;i++<n;aux+=s);
                                        RESULT=aux; :}
-| int_result:n MUL string_result:s 
+| int_result:n MUL string_result:s
 {:  String aux="";
-                                       for(int i=0;i++<n;aux+=s); 
+                                       for(int i=0;i++<n;aux+=s);
                                        RESULT=aux; :}
-| LITERAL:s {: RESULT=s; :} 
+| LITERAL:s {: RESULT=s; :}
 ;
 
 float_result ::= float_result:f MUL float_result:f2 {: RESULT=f*f2; :}
@@ -314,34 +291,34 @@ float_result ::= float_result:f MUL float_result:f2 {: RESULT=f*f2; :}
 | FLOAT:f {: RESULT=f; :}
 ;
 
-assignment ::= lvalue:s PLUS_ASSIGN rvalue:e {: 
+assignment ::= lvalue:s PLUS_ASSIGN rvalue:e {:
     Operacion o=new Operacion(new Lvalue(s),"+",e);
     RESULT=new Assignment(s,o);
-:}  
-| lvalue:s  MINUS_ASSIGN rvalue:e {: 
+:}
+| lvalue:s  MINUS_ASSIGN rvalue:e {:
     Operacion o=new Operacion(new Lvalue(s),"-",e);
     RESULT=new Assignment(s,o);
-:}  
-| lvalue:s  MUL_ASSIGN rvalue:e {: 
+:}
+| lvalue:s  MUL_ASSIGN rvalue:e {:
     Operacion o=new Operacion(new Lvalue(s),"*",e);
     RESULT=new Assignment(s,o);
-:}  
-| lvalue:s  DIV_ASSIGN rvalue:e {: 
+:}
+| lvalue:s  DIV_ASSIGN rvalue:e {:
     Operacion o=new Operacion(new Lvalue(s),"/",e);
     RESULT=new Assignment(s,o);
-:}  
-| lvalue:s MOD_ASSIGN rvalue:e  {: 
+:}
+| lvalue:s MOD_ASSIGN rvalue:e  {:
     Operacion o=new Operacion(new Lvalue(s),"%",e);
     RESULT=new Assignment(s,o);
- :}  
-| lvalue:s EXP_ASSIGN rvalue:e  {: 
+ :}
+| lvalue:s EXP_ASSIGN rvalue:e  {:
     Operacion o=new Operacion(new Lvalue(s),"**",e);
     RESULT=new Assignment(s,o);
- :}  
-| lvalue:s ASSIGN rvalue:v      {:  
+ :}
+| lvalue:s ASSIGN rvalue:v      {:
     RESULT=new Assignment(s,v);
- :}  
-;                                                               
+ :}
+;
 
 function_call ::= LEFT_RBRACKET function_definition_params:f RIGHT_RBRACKET {: RESULT=f;   :}
 | function_definition_params:f {: RESULT=f; :}
@@ -359,9 +336,5 @@ when_statement ::= WHEN array_definition_elements CRLF expression_list
 | WHEN array_definition_elements CRLF
 | ELSE CRLF expression CRLF
 ;
-
-do_statement ::= lvalue:c DO ID_ITER expression_list:l END {:  :}
+case_statement ::= CASE lvalue CRLF when_statement END  {:  :}
 ;
-
-
-
